@@ -127,7 +127,15 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Image.cpp" />
+    <ClCompile Include="PPMImageSaver.cpp" />
     <ClCompile Include="Raytracing_In_A_Weekend.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="BlockArray.hpp" />
+    <ClInclude Include="Image.h" />
+    <ClInclude Include="PPMImageSaver.h" />
+    <ClInclude Include="RGB_Pixel.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
