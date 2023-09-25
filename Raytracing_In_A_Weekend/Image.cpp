@@ -1,11 +1,11 @@
 #include "Image.h"
 
-RGB_Pixel& Image::at(size_t x, size_t y)
+RGB_Pixel& Image::at(size_t m_x, size_t m_y)
 {
-    return pixels[x][y];
+    return pixels[m_x][m_y];
 }
 
-const RGB_Pixel& Image::at(size_t x, size_t y) const
+const RGB_Pixel& Image::at(size_t m_x, size_t m_y) const
 {
-    return pixels[x][y];
+    return pixels[m_x][m_y];
 }

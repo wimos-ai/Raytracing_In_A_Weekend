@@ -4,7 +4,7 @@
 #include <stdexcept> // std::out_of_range
 #include <cstring>	 //memcpy
 
-#define UNUSED(x) (void)x;
+#define UNUSED(m_x) (void)m_x;
 
 template <typename T>
 class ArrayView

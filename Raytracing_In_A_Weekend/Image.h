@@ -17,9 +17,9 @@ public:
 		return pixels.dim_2();
 	}
 
-	RGB_Pixel& at(size_t x, size_t y);
+	RGB_Pixel& at(size_t m_x, size_t m_y);
 
-	const RGB_Pixel& at(size_t x, size_t y) const;
+	const RGB_Pixel& at(size_t m_x, size_t m_y) const;
 
 private:
 	BlockArray2D<RGB_Pixel> pixels;

@@ -129,13 +129,16 @@
   <ItemGroup>
     <ClCompile Include="Image.cpp" />
     <ClCompile Include="PPMImageSaver.cpp" />
+    <ClCompile Include="Ray.cpp" />
     <ClCompile Include="Raytracing_In_A_Weekend.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BlockArray.hpp" />
     <ClInclude Include="Image.h" />
     <ClInclude Include="PPMImageSaver.h" />
+    <ClInclude Include="Ray.h" />
     <ClInclude Include="RGB_Pixel.h" />
+    <ClInclude Include="Vec3D.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
