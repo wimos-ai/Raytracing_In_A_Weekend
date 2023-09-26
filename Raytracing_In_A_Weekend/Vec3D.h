@@ -69,6 +69,11 @@ public:
 		double length = this->length();
 		return *this / length;
 	}
+
+	inline bool operator==(const Vec3D& other) const {
+		return this->m_x == other.m_x && this->m_y == other.m_y && this->m_z == other.m_z;
+	}
+
 private:
 	double m_x, m_y, m_z;
 };

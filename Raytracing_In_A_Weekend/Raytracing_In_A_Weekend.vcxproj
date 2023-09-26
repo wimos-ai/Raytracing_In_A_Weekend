@@ -127,18 +127,26 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Camera.cpp" />
     <ClCompile Include="Image.cpp" />
     <ClCompile Include="PPMImageSaver.cpp" />
-    <ClCompile Include="Ray.cpp" />
     <ClCompile Include="Raytracing_In_A_Weekend.cpp" />
+    <ClCompile Include="Shapes.cpp" />
+    <ClCompile Include="Utils.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BlockArray.hpp" />
+    <ClInclude Include="Camera.h" />
     <ClInclude Include="Image.h" />
     <ClInclude Include="PPMImageSaver.h" />
     <ClInclude Include="Ray.h" />
     <ClInclude Include="RGB_Pixel.h" />
+    <ClInclude Include="Shapes.h" />
+    <ClInclude Include="Utills.h" />
     <ClInclude Include="Vec3D.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="ppmViewer.py" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -3,43 +3,23 @@
 
 #include "Image.h"
 #include "PPMImageSaver.h"
+#include "Camera.h"
 
 int main()
 {
-    // Image
 
-    int image_width = 256;
-    int image_height = 256;
+	auto sz = Camera::width_height_from_aspect_ratio(400, 16.0 / 9.0);
 
-    // Render
+	// Vec3D pos, Vec3D cam_dir, Vec3D image_up, double focal_len, size_t pix_width, size_t pix_height
+	Camera cam(Vec3D(0, 0, 0), Vec3D(1, 0, 0), Vec3D(0, 1, 0), 1.0, sz.first, sz.second);
 
-    Image im(image_width, image_height);
+	std::vector<Shape*> sceen;
 
-    for (int j = 0; j < image_height; ++j) {
-        for (int i = 0; i < image_width; ++i) {
-            auto r = double(i) / (image_width - 1);
-            auto g = double(j) / (image_height - 1);
-            auto b = 0;
+	Sphere s1({ 0,0,0 }, .5);
 
-            uint8_t ir = static_cast<uint8_t>(255.999 * r);
-            uint8_t ig = static_cast<uint8_t>(255.999 * g);
-            uint8_t ib = static_cast<uint8_t>(255.999 * b);
+	sceen.push_back(&s1);
 
-            im.at(i, j) = { ir, ig, ib };
+	auto im = cam.snap(sceen);
 
-        }
-    }
-
-    PPMImageSaver::save(im, "image.ppm");
+	PPMImageSaver::save(im, "image.ppm");
 }
-
-// Run program: Ctrl + F5 or Debug > Start Without Debugging menu
-// Debug program: F5 or Debug > Start Debugging menu
-
-// Tips for Getting Started: 
-//   1. Use the Solution Explorer window to add/manage files
-//   2. Use the Team Explorer window to connect to source control
-//   3. Use the Output window to see build output and other messages
-//   4. Use the Error List window to view errors
-//   5. Go to Project > Add New Item to create new code files, or Project > Add Existing Item to add existing code files to the project
-//   6. In the future, to open this project again, go to File > Open > Project and select the .sln file

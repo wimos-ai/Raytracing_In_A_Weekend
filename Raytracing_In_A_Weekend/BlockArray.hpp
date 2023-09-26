@@ -18,8 +18,6 @@ public:
 #ifndef _DEBUG
 		UNUSED(len);
 #endif
-
-
 	}
 
 	T& operator[](size_t index)
@@ -43,13 +41,11 @@ public:
 #endif
 		return m_arr[index];
 	}
-
 private:
 	T* m_arr;
 #ifdef _DEBUG
 	const size_t length;
 #endif
-
 };
 
 template <typename T>
