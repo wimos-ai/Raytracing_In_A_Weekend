@@ -23,6 +23,19 @@ public:
 	inline double max() const { return m_max; }
 
 	inline double min() const{ return m_min; }
+
+	inline double clamp(double d) const {
+		if (d < m_min)
+		{
+			return m_min;
+		}
+		else if (d > m_max)
+		{
+			return m_max;
+		}
+		return d;
+	}
+
 private:
 	double m_min;
 	double m_max;
