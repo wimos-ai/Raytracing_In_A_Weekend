@@ -6,6 +6,7 @@
 #include "Ray.h"
 #include "Image.h"
 #include "Shapes.h"
+#include "HittableScene.h"
 
 
 //See https://raytracing.github.io/books/RayTracingInOneWeekend.html#rays,asimplecamera,andbackground/sendingraysintothescene
@@ -17,13 +18,13 @@ public:
 	Camera(Vec3D pos, Vec3D direction, Vec3D image_up, double focal_len, size_t pix_width, size_t pix_height);
 	Camera() = delete;
 
-	Image snap(std::vector<Shape*>& shapes);
+	Image snap(HittableScene& scene);
 
 	static std::pair<size_t, size_t> width_height_from_aspect_ratio(size_t width, double aspect_ratio);
 
 private:
 	Ray ray_to_pixel(size_t width, size_t height);
-	RGB_Pixel get_ray_color(Ray& ray, std::vector<Shape*>& shapes);
+	RGB_Pixel get_ray_color(Ray& ray, HittableScene& scene);
 
 private:
 	

@@ -128,7 +128,9 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Camera.cpp" />
+    <ClCompile Include="HittableScene.cpp" />
     <ClCompile Include="Image.cpp" />
+    <ClCompile Include="Interval.cpp" />
     <ClCompile Include="PPMImageSaver.cpp" />
     <ClCompile Include="Raytracing_In_A_Weekend.cpp" />
     <ClCompile Include="RGB_Pixel.cpp" />
@@ -138,7 +140,9 @@
   <ItemGroup>
     <ClInclude Include="BlockArray.hpp" />
     <ClInclude Include="Camera.h" />
+    <ClInclude Include="HittableScene.h" />
     <ClInclude Include="Image.h" />
+    <ClInclude Include="Interval.h" />
     <ClInclude Include="PPMImageSaver.h" />
     <ClInclude Include="Ray.h" />
     <ClInclude Include="RGB_Pixel.h" />

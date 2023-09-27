@@ -1,45 +1,45 @@
 #include "Shapes.h"
+#include <cassert>
 
-Sphere::Sphere(Vec3D translation, double radius): m_translation(translation), m_radius(radius)
+void HitReccord::set_face_normal(const Ray& ray, const Vec3D& vec) {
+	front_face = ray.direction().dot(vec) < 0;
+	normal = front_face ? vec : -1 * vec;
+	//assert(vec.unit_vec() == vec);
+}
+
+Sphere::Sphere(Vec3D translation, double radius) : m_translation(translation), m_radius(radius)
 {
 }
 
-bool Sphere::hit(const Ray& ray, double ray_tmin, double ray_tmax, HitReccord& rec)
+bool Sphere::hit(const Ray& ray, const Interval& ray_interval, HitReccord& rec)
 {
-    const Vec3D oc = ray.origin() - this->m_translation;
-    const double a = ray.direction().length_squared();
-    const double half_b = ray.direction().dot(oc);
-    const double c = oc.length_squared() - m_radius * m_radius;
+	const Vec3D oc = ray.origin() - this->m_translation;
+	const double a = ray.direction().length_squared();
+	const double half_b = ray.direction().dot(oc);
+	const double c = oc.length_squared() - m_radius * m_radius;
 
-    const double discriminant = half_b * half_b -  a * c;
+	const double discriminant = half_b * half_b - a * c;
 
-    if (discriminant < 0) {
-        return -false;
-    }
-    
-    const double sqrt_disc = std::sqrt(discriminant);
+	if (discriminant < 0) {
+		return -false;
+	}
 
-    double root = (-half_b - sqrt_disc) / a;
-    if (root <= ray_tmin || ray_tmax <= root) {
-        root = (-half_b + sqrt_disc) / a;
-        if (root <= ray_tmin || ray_tmax <= root)
-            return false;
-    }
+	const double sqrt_disc = std::sqrt(discriminant);
 
-    rec.t = root;
-    rec.point = ray.at(root);
-    rec.normal = (rec.point - m_translation) / m_radius;
+	double root = (-half_b - sqrt_disc) / a;
+	if (!ray_interval.surrounds(root)) {
+		root = (-half_b + sqrt_disc) / a;
+		if (!ray_interval.surrounds(root))
+			return false;
+	}
 
-    return true;
+
+
+	rec.t = root;
+	rec.point = ray.at(root);
+	rec.normal = ((rec.point - m_translation) / m_radius).unit_vec();
+	rec.set_face_normal(ray, rec.normal);
+
+	return true;
 }
 
-//RGB_Pixel Sphere::get_color(const Ray& ray, double discriminant)
-//{
-//    Vec3D n = (ray.at(discriminant) - m_translation).unit_vec();
-//    Vec3D color =  0.5 * Vec3D(n.x() + 1, n.y() + 1, n.z() + 1);
-//    return {
-//        static_cast<uint8_t>(color.x() * 255),
-//        static_cast<uint8_t>(color.y() * 255),
-//        static_cast<uint8_t>(color.z() * 255)
-//    };
-//}

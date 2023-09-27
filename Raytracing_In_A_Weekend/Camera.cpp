@@ -10,18 +10,18 @@
 //size_t m_width;				//Number of horizontal Pixels
 //size_t m_height;			//Number of vertical pixels
 
-Camera::Camera(Vec3D pos, Vec3D cam_dir, Vec3D image_up, double focal_len, size_t pix_width, size_t pix_height): m_direction(cam_dir.unit_vec()), m_height(pix_height), m_width(pix_width)
+Camera::Camera(Vec3D pos, Vec3D cam_dir, Vec3D image_up, double focal_len, size_t pix_width, size_t pix_height) : m_direction(cam_dir.unit_vec()), m_height(pix_height), m_width(pix_width)
 {
 	m_focal_point = pos - cam_dir.unit_vec() * focal_len;
 
-	const double units_per_pixel = image_up.length() * 2 / static_cast<double>(pix_height);
+	const double units_per_pixel = image_up.length() * 2.0 / static_cast<double>(pix_height);
 
 
 	m_delta_width = image_up.cross(cam_dir).unit_vec() * units_per_pixel;
 	m_delta_height = image_up.unit_vec() * units_per_pixel;
 
 
-	m_viewport_corner = pos - ((m_delta_width * pix_width + m_delta_height * pix_height)/2);
+	m_viewport_corner = pos - ((m_delta_width * pix_width + m_delta_height * pix_height) / 2);
 	m_viewport_corner = m_viewport_corner + (0.5 * m_delta_width + m_delta_height);
 
 
@@ -31,20 +31,16 @@ Camera::Camera(Vec3D pos, Vec3D cam_dir, Vec3D image_up, double focal_len, size_
 }
 
 
-Image Camera::snap(std::vector<Shape*>& shapes)
+Image Camera::snap(HittableScene& scene)
 {
 	Image im(m_width, m_height);
 
-	Ray ray;
-	int j = 0;
-	int i = 0;
-	for (j = 0; j < im.height(); ++j) {
-		for (i = 0; i < im.width(); ++i) {
-			ray = ray_to_pixel(i, j);
-			im.at(i, j) = get_ray_color(ray, shapes);
+	for (size_t j = 0; j < im.height(); ++j) {
+		for (size_t i = 0; i < im.width(); ++i) {
+			Ray ray = ray_to_pixel(i, j);
+			im.at(i, j) = get_ray_color(ray, scene);
 		}
 	}
-	ray = ray_to_pixel(i, j);
 	return im;
 }
 
@@ -58,18 +54,15 @@ Ray Camera::ray_to_pixel(size_t width, size_t height)
 	return Ray(m_focal_point, fp_to_pixel);
 }
 
-RGB_Pixel Camera::get_ray_color(Ray& ray, std::vector<Shape*>& shapes)
+RGB_Pixel Camera::get_ray_color(Ray& ray, HittableScene& scene)
 {
-	for (auto &it: shapes)
+	HitReccord rec;
+	//Having the interval be in the + direction prevents 
+	//Us from drawing stuff that is behind the camera
+	if (scene.hit(ray, Interval(0.0, Interval::c_INFINITY), rec))
 	{
-		HitReccord rec;
-		it->hit(ray, 0, 1000, rec);
-		if (rec.t > 0.0) {
-			Vec3D N = (ray.at(rec.t) - Vec3D(0, 0, -1)).unit_vec();
-			return RGB_Pixel(0.5 * Vec3D(N.x() + 1, N.y() + 1, N.z() + 1));
-		}
+		return RGB_Pixel::from_normal_vec(ray.at(rec.t));
 	}
-	
 	Vec3D unit_direction = ray.direction().unit_vec();
 	auto a = 0.5 * (unit_direction.y() + 1.0);
 	Vec3D output_rgb = (1.0 - a) * Vec3D(1.0, 1.0, 1.0) + a * Vec3D(0.5, 0.7, 1.0);

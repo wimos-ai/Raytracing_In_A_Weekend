@@ -12,5 +12,7 @@ typedef struct RGB_Pixel{
 	inline RGB_Pixel(R_t r_in, G_t g_in, B_t b_in) : r(r_in), g(g_in), b(b_in) {};
 
 	explicit RGB_Pixel(const Vec3D& other);
+
+	static RGB_Pixel from_normal_vec(const Vec3D& other);
 }RGB_Pixel;
 
