@@ -131,6 +131,7 @@
     <ClCompile Include="Image.cpp" />
     <ClCompile Include="PPMImageSaver.cpp" />
     <ClCompile Include="Raytracing_In_A_Weekend.cpp" />
+    <ClCompile Include="RGB_Pixel.cpp" />
     <ClCompile Include="Shapes.cpp" />
     <ClCompile Include="Utils.cpp" />
   </ItemGroup>
