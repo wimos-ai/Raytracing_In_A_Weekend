@@ -1,5 +1,7 @@
 #pragma once
 #include <cmath>
+#include "Utills.h"
+#include "Interval.h"
 
 class Vec3D
 {
@@ -72,6 +74,34 @@ public:
 
 	inline bool operator==(const Vec3D& other) const {
 		return this->m_x == other.m_x && this->m_y == other.m_y && this->m_z == other.m_z;
+	}
+
+	static inline Vec3D random() {
+		return Vec3D(RandUtils::rand(), RandUtils::rand(), RandUtils::rand());
+	}
+
+	static inline Vec3D random(const Interval& interval) {
+		return Vec3D(RandUtils::rand(interval), RandUtils::rand(interval), RandUtils::rand(interval));
+	}
+
+	inline static Vec3D random_in_unit_sphere() {
+		while (true) {
+			Vec3D p = Vec3D::random(Interval( - 1, 1));
+			if (p.length_squared() < 1)
+				return p;
+		}
+	}
+
+	inline static Vec3D random_unit_vec() {
+		return Vec3D::random_in_unit_sphere().unit_vec();
+	}
+
+	inline static Vec3D random_on_hemisphere(const Vec3D& normal) {
+		Vec3D on_unit_sphere = Vec3D::random_unit_vec();
+		if (normal.dot(on_unit_sphere) > 0.0) // In the same hemisphere as the normal
+			return on_unit_sphere;
+		else
+			return on_unit_sphere * -1;
 	}
 
 private:

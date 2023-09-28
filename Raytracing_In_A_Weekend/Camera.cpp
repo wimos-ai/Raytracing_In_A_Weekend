@@ -26,11 +26,29 @@ Camera::Camera(Vec3D pos, Vec3D cam_dir, Vec3D image_up, double focal_len, size_
 	m_viewport_corner = m_viewport_corner + (0.5 * m_delta_width + m_delta_height);
 
 	if (cfg != nullptr)
-	{
-		m_samples_per_pixel = cfg->samples_per_pixel;
+	{	
+		if (cfg->samples_per_pixel != 0)
+		{
+			m_samples_per_pixel = cfg->samples_per_pixel;
+		}
+		else
+		{
+			m_samples_per_pixel = Camera::DEFAULT_SAMPLES_PER_PIXEL;
+		}
+
+		if (cfg->max_depth != 0)
+		{
+			m_max_depth = cfg->max_depth;
+		}
+		else {
+			m_max_depth = Camera::DEFAULT_MAX_DEPTH;
+		}
+		
+		
 	}
 	else {
-		m_samples_per_pixel = 10;
+		m_samples_per_pixel = Camera::DEFAULT_SAMPLES_PER_PIXEL;
+		m_max_depth = Camera::DEFAULT_MAX_DEPTH;
 	}
 
 	assert(image_up.dot(cam_dir) == 0);
@@ -49,13 +67,13 @@ Image Camera::snap(HittableScene& scene)
 			for (size_t k = 0; k < m_samples_per_pixel; k++)
 			{
 				Ray ray = ray_to_pixel(i, j);
-				RGB_Pixel px = get_ray_color(ray, scene);
-				Vec3D px_vec = Vec3D(px.r, px.g, px.b);
-				color = color + px_vec;
+				RGB_Pixel px_vec = RGB_Pixel(get_ray_color(ray, scene,0));
+
+				color = color + Vec3D(px_vec.r, px_vec.g, px_vec.b);
 			}
 			color = color / static_cast<double>(m_samples_per_pixel);
 
-			im.at(i, j) = RGB_Pixel(color.x(), color.y(),color.z());
+			im.at(i, j) = RGB_Pixel(color.x(), color.y(), color.z());
 		}
 	}
 	return im;
@@ -72,19 +90,25 @@ Ray Camera::ray_to_pixel(size_t width, size_t height)
 	return Ray(m_focal_point, fp_to_pixel + random_deviation);
 }
 
-RGB_Pixel Camera::get_ray_color(Ray& ray, HittableScene& scene)
+Vec3D Camera::get_ray_color(const Ray& ray, HittableScene& scene, int depth)
 {
+	if (depth >= m_max_depth)
+	{
+		return Color3D(0, 0, 0);
+	}
+
 	HitReccord rec;
 	//Having the interval be in the + direction prevents 
 	//Us from drawing stuff that is behind the camera
-	if (scene.hit(ray, Interval(0.0, Interval::c_INFINITY), rec))
+	if (scene.hit(ray, Interval(0.001, Interval::c_INFINITY), rec))
 	{
-		return RGB_Pixel::from_normal_vec(ray.at(rec.t));
+		Vec3D direction = Vec3D::random_on_hemisphere(rec.normal);
+		Ray reflection_ray = Ray(rec.point, direction);
+		return  0.5 * get_ray_color(reflection_ray, scene, depth + 1);
 	}
-	Vec3D unit_direction = ray.direction().unit_vec();
+	Vec3D unit_direction = ray.direction().unit_vec();;
 	auto a = 0.5 * (unit_direction.y() + 1.0);
-	Vec3D output_rgb = (1.0 - a) * Vec3D(1.0, 1.0, 1.0) + a * Vec3D(0.5, 0.7, 1.0);
-	return RGB_Pixel(output_rgb);
+	return (1.0 - a) * Vec3D(1.0, 1.0, 1.0) + a * Vec3D(0.5, 0.7, 1.0);
 }
 
 Vec3D Camera::pixel_sample_square() const

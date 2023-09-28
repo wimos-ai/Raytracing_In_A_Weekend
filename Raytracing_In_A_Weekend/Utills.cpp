@@ -1,10 +1,10 @@
 #include "Utills.h"
-#include <cstdio>
+#include <cstdlib>
 #include <ctime>
 
 namespace {
 	bool seed_rand() {
-		srand(time(nullptr));
+		std::srand(time(nullptr));
 		return true;
 	}
 }
@@ -17,7 +17,7 @@ double RandUtils::rand()
     return std::rand() / (RAND_MAX + 1.0);
 }
 
-double RandUtils::rand(Interval in)
+double RandUtils::rand(const Interval& in)
 {
     return in.min() + (in.max() - in.min()) * RandUtils::rand();
 }

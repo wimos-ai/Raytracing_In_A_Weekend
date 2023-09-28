@@ -17,6 +17,7 @@ public:
 	typedef struct CameraConfig
 	{
 		size_t samples_per_pixel;
+		size_t max_depth;
 	}CameraConfig;
 
 
@@ -29,7 +30,7 @@ public:
 
 private:
 	Ray ray_to_pixel(size_t width, size_t height);
-	RGB_Pixel get_ray_color(Ray& ray, HittableScene& scene);
+	Vec3D get_ray_color(const Ray& ray, HittableScene& scene, int depth);
 	Vec3D pixel_sample_square() const;
 
 private:
@@ -41,7 +42,12 @@ private:
 	Vec3D m_delta_height;		//Vertical Pixel Delta
 	size_t m_width;				//Number of horizontal Pixels
 	size_t m_height;			//Number of vertical pixels
-	size_t m_samples_per_pixel;
+	size_t m_samples_per_pixel; //Number of ray samples per pixel
+	size_t m_max_depth;			//Number of times a ray can bounce
+
+private:
+	static constexpr size_t DEFAULT_SAMPLES_PER_PIXEL = 10;
+	static constexpr size_t DEFAULT_MAX_DEPTH = 10;
 };
 
 
