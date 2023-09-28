@@ -1,5 +1,6 @@
 #pragma once
 #include "Image.h"
+#include <cstdint>
 
 class PPMImageSaver
 {
@@ -17,7 +18,7 @@ private:
 
     static void writeBitmapInfoHeader(FILE* file, size_t width, size_t height);
 
-    static void writeInt16(FILE* file, int value);
+    static void writeInt16(FILE* file, int16_t value);
 
-    static void writeInt32(FILE* file, int value);
+    static void writeInt32(FILE* file, int32_t value);
 };
