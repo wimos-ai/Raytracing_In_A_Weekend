@@ -2,7 +2,7 @@
 //
 
 #include "Image.h"
-#include "PPMImageSaver.h"
+#include "ImageSaver.h"
 #include "Camera.h"
 
 
@@ -35,5 +35,5 @@ int main()
 
 	auto im = cam.snap(sceen);
 
-	PPMImageSaver::save(im, "image.ppm");
+	BMPImageSaver::save(im, "image.bmp");
 }

@@ -14,7 +14,7 @@ bool seeded_rand = seed_rand();
 
 double RandUtils::rand()
 {
-    return rand() / (RAND_MAX + 1.0);
+    return std::rand() / (RAND_MAX + 1.0);
 }
 
 double RandUtils::rand(Interval in)

@@ -81,3 +81,5 @@ private:
 inline Vec3D operator*(double d, const Vec3D& other) {
 	return other * d;
 }
+
+using Color3D = Vec3D;
