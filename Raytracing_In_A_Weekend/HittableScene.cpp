@@ -1,6 +1,6 @@
 #include "HittableScene.h"
 
-bool HittableScene::hit(const Ray& ray, const Interval& ray_interval, HitReccord& rec)
+bool HittableScene::hit(const Ray& ray, const Interval& ray_interval, HitReccord& rec) const
 {
 	auto closest_so_far = ray_interval.max();
 	bool hit_something = false;
@@ -19,9 +19,3 @@ bool HittableScene::hit(const Ray& ray, const Interval& ray_interval, HitReccord
 	}
 	return hit_something;
 }
-
-
-//	if (rec.t > 0.0) {
-//Vec3D N = (ray.at(rec.t) - Vec3D(0, 0, -1)).unit_vec();
-//return RGB_Pixel(0.5 * Vec3D(N.x() + 1, N.y() + 1, N.z() + 1));
-//		}

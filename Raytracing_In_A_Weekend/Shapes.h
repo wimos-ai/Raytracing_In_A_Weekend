@@ -15,7 +15,7 @@ struct HitReccord {
 
 class Shape {
 public:
-	virtual bool hit(const Ray& ray, const Interval& ray_interval, HitReccord& rec) = 0;
+	virtual bool hit(const Ray& ray, const Interval& ray_interval, HitReccord& rec) const = 0;
 	virtual ~Shape() = default;
 };
 
@@ -25,7 +25,7 @@ class Sphere: public Shape
 public:
 	Sphere(Vec3D translation, double radius);
 
-	bool hit(const Ray& ray, const Interval& ray_interval, HitReccord& rec) override;
+	bool hit(const Ray& ray, const Interval& ray_interval, HitReccord& rec) const override;
 
 private:
 	Vec3D m_translation;

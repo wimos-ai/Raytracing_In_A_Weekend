@@ -18,19 +18,22 @@ public:
 	{
 		size_t samples_per_pixel;
 		size_t max_depth;
+		size_t num_thds;
 	}CameraConfig;
 
 
 	Camera(Vec3D pos, Vec3D direction, Vec3D image_up, double focal_len, size_t pix_width, size_t pix_height, CameraConfig* cfg = nullptr);
 	Camera() = delete;
 
-	Image snap(HittableScene& scene);
+	Image snap(const HittableScene& scene);
 
 	static std::pair<size_t, size_t> width_height_from_aspect_ratio(size_t width, double aspect_ratio);
 
 private:
 	Ray ray_to_pixel(size_t width, size_t height);
-	Vec3D get_ray_color(const Ray& ray, HittableScene& scene, int depth);
+	void compute_row(Image& im_out, size_t row_idx, const HittableScene& scene);
+	RGB_Pixel compute_color(size_t width, size_t height, const HittableScene& scene);
+	Vec3D get_ray_color(const Ray& ray, const HittableScene& scene, int depth);
 	Vec3D pixel_sample_square() const;
 
 private:
@@ -44,6 +47,7 @@ private:
 	size_t m_height;			//Number of vertical pixels
 	size_t m_samples_per_pixel; //Number of ray samples per pixel
 	size_t m_max_depth;			//Number of times a ray can bounce
+	size_t m_num_thds;			//Number of threads for ray bouncing
 
 private:
 	static constexpr size_t DEFAULT_SAMPLES_PER_PIXEL = 10;

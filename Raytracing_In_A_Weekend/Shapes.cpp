@@ -11,7 +11,7 @@ Sphere::Sphere(Vec3D translation, double radius) : m_translation(translation), m
 {
 }
 
-bool Sphere::hit(const Ray& ray, const Interval& ray_interval, HitReccord& rec)
+bool Sphere::hit(const Ray& ray, const Interval& ray_interval, HitReccord& rec) const
 {
 	const Vec3D oc = ray.origin() - this->m_translation;
 	const double a = ray.direction().length_squared();

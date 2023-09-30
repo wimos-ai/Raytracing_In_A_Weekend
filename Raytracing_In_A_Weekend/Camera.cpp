@@ -2,6 +2,8 @@
 #include <cassert>
 #include <limits>
 #include "Utills.h"
+#include "ThreadPool.h"
+#include <cstdio>
 
 //Vec3D m_focal_point;		//Focal Point
 //Vec3D m_direction;			//Image normal vector, may be discardable after construction
@@ -25,31 +27,24 @@ Camera::Camera(Vec3D pos, Vec3D cam_dir, Vec3D image_up, double focal_len, size_
 	m_viewport_corner = pos - ((m_delta_width * static_cast<double>(pix_width) + m_delta_height * static_cast<double>(pix_height)) / 2.0);
 	m_viewport_corner = m_viewport_corner + (0.5 * m_delta_width + m_delta_height);
 
-	if (cfg != nullptr)
-	{	
-		if (cfg->samples_per_pixel != 0)
-		{
-			m_samples_per_pixel = cfg->samples_per_pixel;
-		}
-		else
-		{
-			m_samples_per_pixel = Camera::DEFAULT_SAMPLES_PER_PIXEL;
-		}
+	//Num Thds
+	if (cfg != nullptr && cfg->num_thds != 0)
+		m_num_thds = cfg->num_thds;
+	else
+		m_num_thds = 1;
 
-		if (cfg->max_depth != 0)
-		{
-			m_max_depth = cfg->max_depth;
-		}
-		else {
-			m_max_depth = Camera::DEFAULT_MAX_DEPTH;
-		}
-		
-		
-	}
-	else {
+	//Samples per pixel
+	if (cfg != nullptr && cfg->samples_per_pixel != 0)
+		m_samples_per_pixel = cfg->samples_per_pixel;
+	else
 		m_samples_per_pixel = Camera::DEFAULT_SAMPLES_PER_PIXEL;
+
+	//Max depth
+	if (cfg != nullptr && cfg->max_depth != 0)
+		m_max_depth = cfg->max_depth;
+	else
 		m_max_depth = Camera::DEFAULT_MAX_DEPTH;
-	}
+
 
 	assert(image_up.dot(cam_dir) == 0);
 	assert(m_delta_height.dot(m_delta_width) == 0);
@@ -57,25 +52,29 @@ Camera::Camera(Vec3D pos, Vec3D cam_dir, Vec3D image_up, double focal_len, size_
 }
 
 
-Image Camera::snap(HittableScene& scene)
+Image Camera::snap(const HittableScene& scene)
 {
 	Image im(m_width, m_height);
 
-	for (size_t j = 0; j < im.height(); ++j) {
-		for (size_t i = 0; i < im.width(); ++i) {
-			Vec3D color(0, 0, 0);
-			for (size_t k = 0; k < m_samples_per_pixel; k++)
-			{
-				Ray ray = ray_to_pixel(i, j);
-				RGB_Pixel px_vec = RGB_Pixel(get_ray_color(ray, scene,0));
+	if (m_num_thds > 1)
+	{
+		ThreadPool ray_trace_pool(m_num_thds);
+		for (size_t j = 0; j < im.height(); ++j) {
 
-				color = color + Vec3D(px_vec.r, px_vec.g, px_vec.b);
-			}
-			color = color / static_cast<double>(m_samples_per_pixel);
-
-			im.at(i, j) = RGB_Pixel(color.x(), color.y(), color.z());
+			ray_trace_pool.submit_task([this, &im, j, &scene]() {
+				compute_row(im, j, scene);
+				}
+			);
 		}
 	}
+	else {
+		for (size_t j = 0; j < im.height(); ++j) {
+			compute_row(im, j, scene);
+
+		}
+	}
+
+
 	return im;
 }
 
@@ -90,7 +89,28 @@ Ray Camera::ray_to_pixel(size_t width, size_t height)
 	return Ray(m_focal_point, fp_to_pixel + random_deviation);
 }
 
-Vec3D Camera::get_ray_color(const Ray& ray, HittableScene& scene, int depth)
+void Camera::compute_row(Image& im_out, size_t row_idx, const HittableScene& scene)
+{
+	for (size_t i = 0; i < im_out.width(); i++)
+	{
+		im_out.at(i, row_idx) = compute_color(i, row_idx, scene);
+	}
+}
+
+
+RGB_Pixel Camera::compute_color(size_t width, size_t height, const HittableScene& scene)
+{
+	Vec3D color(0, 0, 0);
+	for (size_t k = 0; k < m_samples_per_pixel; k++)
+	{
+		Ray ray = ray_to_pixel(width, height);
+		color = color + get_ray_color(ray, scene, 0);
+	}
+	color = color / static_cast<double>(m_samples_per_pixel);
+	return RGB_Pixel(color);
+}
+
+Vec3D Camera::get_ray_color(const Ray& ray, const HittableScene& scene, int depth)
 {
 	if (depth >= m_max_depth)
 	{
@@ -102,7 +122,7 @@ Vec3D Camera::get_ray_color(const Ray& ray, HittableScene& scene, int depth)
 	//Us from drawing stuff that is behind the camera
 	if (scene.hit(ray, Interval(0.001, Interval::c_INFINITY), rec))
 	{
-		Vec3D direction = Vec3D::random_on_hemisphere(rec.normal);
+		Vec3D direction = rec.normal + Vec3D::random_unit_vec();
 		Ray reflection_ray = Ray(rec.point, direction);
 		return  0.5 * get_ray_color(reflection_ray, scene, depth + 1);
 	}

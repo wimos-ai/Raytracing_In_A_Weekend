@@ -14,13 +14,15 @@
 int main()
 {
 
-	auto sz = Camera::width_height_from_aspect_ratio(400, 16.0 / 9.0);
+	auto sz = Camera::width_height_from_aspect_ratio(1000, 16.0 / 9.0);
 
 	// Vec3D pos, Vec3D cam_dir, Vec3D image_up, double focal_len, size_t pix_width, size_t pix_height
 
 
 	Camera::CameraConfig cfg = { 0 };
-	cfg.samples_per_pixel = 100;
+	cfg.samples_per_pixel = 10;
+	cfg.max_depth = 10;
+	cfg.num_thds = 19;
 	Camera cam(Vec3D(0, 0, 0), Vec3D(0, 0, -2), Vec3D(0, -1, 0), 1.0, sz.first, sz.second, &cfg);
 
 	HittableScene sceen;
