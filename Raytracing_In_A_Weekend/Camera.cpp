@@ -104,7 +104,7 @@ RGB_Pixel Camera::compute_color(size_t width, size_t height, const HittableScene
 	for (size_t k = 0; k < m_samples_per_pixel; k++)
 	{
 		Ray ray = ray_to_pixel(width, height);
-		color = color + get_ray_color(ray, scene, 0);
+		color = color + get_ray_color(ray, scene, m_max_depth);
 	}
 	color = color / static_cast<double>(m_samples_per_pixel);
 	return RGB_Pixel(color);
@@ -112,7 +112,7 @@ RGB_Pixel Camera::compute_color(size_t width, size_t height, const HittableScene
 
 Vec3D Camera::get_ray_color(const Ray& ray, const HittableScene& scene, int depth)
 {
-	if (depth >= m_max_depth)
+	if (depth <= 0)
 	{
 		return Color3D(0, 0, 0);
 	}
@@ -122,11 +122,13 @@ Vec3D Camera::get_ray_color(const Ray& ray, const HittableScene& scene, int dept
 	//Us from drawing stuff that is behind the camera
 	if (scene.hit(ray, Interval(0.001, Interval::c_INFINITY), rec))
 	{
-		Vec3D direction = rec.normal + Vec3D::random_unit_vec();
-		Ray reflection_ray = Ray(rec.point, direction);
-		return  0.5 * get_ray_color(reflection_ray, scene, depth + 1);
+		Ray scattered;
+		Color3D attenuation;
+		if (rec.material->scatter(ray, rec, attenuation, scattered))
+			return attenuation * get_ray_color(scattered, scene, depth - 1);
+		return Color3D(0, 0, 0);
 	}
-	Vec3D unit_direction = ray.direction().unit_vec();;
+	Vec3D unit_direction = ray.direction().unit_vec();
 	auto a = 0.5 * (unit_direction.y() + 1.0);
 	return (1.0 - a) * Vec3D(1.0, 1.0, 1.0) + a * Vec3D(0.5, 0.7, 1.0);
 }

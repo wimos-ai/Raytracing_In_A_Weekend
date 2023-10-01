@@ -7,7 +7,7 @@ void HitReccord::set_face_normal(const Ray& ray, const Vec3D& vec) {
 	//assert(vec.unit_vec() == vec);
 }
 
-Sphere::Sphere(Vec3D translation, double radius) : m_translation(translation), m_radius(radius)
+Sphere::Sphere(Vec3D translation, double radius, Material* mat) : m_translation(translation), m_radius(radius), m_material(mat)
 {
 }
 
@@ -39,6 +39,7 @@ bool Sphere::hit(const Ray& ray, const Interval& ray_interval, HitReccord& rec) 
 	rec.point = ray.at(root);
 	rec.normal = ((rec.point - m_translation) / m_radius).unit_vec();
 	rec.set_face_normal(ray, rec.normal);
+	rec.material = m_material;
 
 	return true;
 }

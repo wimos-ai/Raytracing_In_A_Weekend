@@ -133,6 +133,7 @@
     <ClCompile Include="Interval.cpp" />
     <ClCompile Include="ImageSaver.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="Material.cpp" />
     <ClCompile Include="RGB_Pixel.cpp" />
     <ClCompile Include="Semaphore.cpp" />
     <ClCompile Include="Shapes.cpp" />
@@ -146,6 +147,7 @@
     <ClInclude Include="Image.h" />
     <ClInclude Include="Interval.h" />
     <ClInclude Include="ImageSaver.h" />
+    <ClInclude Include="Material.h" />
     <ClInclude Include="Ray.h" />
     <ClInclude Include="RGB_Pixel.h" />
     <ClInclude Include="Semaphore.h" />

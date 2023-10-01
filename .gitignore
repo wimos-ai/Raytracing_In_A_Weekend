@@ -30,3 +30,6 @@
 *.exe
 *.out
 *.app
+/Raytracing_In_A_Weekend/x64
+/.vs/Raytracing_In_A_Weekend
+/x64

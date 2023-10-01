@@ -104,12 +104,25 @@ public:
 			return on_unit_sphere * -1;
 	}
 
+	inline bool near_zero() const {
+		// Return true if the vector is close to zero in all dimensions.
+		auto s = 1e-8;
+		return (fabs(m_x) < s) && ((m_y) < s) && ((m_z) < s);
+	}
+
+	inline static Vec3D reflect(const Vec3D& v, const Vec3D& n) {
+		return v - (n * (2 * v.dot(n)));
+	}
+
 private:
 	double m_x, m_y, m_z;
 };
 
 inline Vec3D operator*(double d, const Vec3D& other) {
 	return other * d;
+}
+inline Vec3D operator*(const Vec3D& u, const Vec3D& v) {
+	return Vec3D(u.x() * v.x(), u.y() * v.y(), u.x() * v.z());
 }
 
 using Color3D = Vec3D;
