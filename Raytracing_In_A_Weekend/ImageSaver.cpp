@@ -1,12 +1,8 @@
 #include "ImageSaver.h"
 #include <cstdio>
-#include <fstream>
-#include <iostream>
 
 
 namespace uint8_str_lookup {
-
-
 	const char* str[] = {
 		"0",
 		"1",
