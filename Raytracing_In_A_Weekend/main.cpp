@@ -6,7 +6,7 @@
 #include "Camera.h"
 
 
-#include "ray.h"
+#include "Ray.h"
 #include "Vec3D.h"
 #include "Shapes.h"
 #include "Material.h"
@@ -26,12 +26,12 @@ void  img_13_shiny_metal() {
 	HittableScene scene;
 	Lambertian material_ground(Color3D(0.8, 0.8, 0.0));
 	Lambertian material_center(Color3D(0.7, 0.3, 0.3));
-	Metal material_left(Color3D(0.8, 0.8, 0.8));
+	Dielectric material_left(1);
 	Metal material_right(Color3D(0.8, 0.6, 0.2));
 
 	Sphere s1(Vec3D(0.0, -100.5, -1.0), 100.0, &material_ground);
 	Sphere s2(Vec3D(0.0, 0.0, -1.0), 0.5, &material_center);
-	Sphere s3(Vec3D(-1.0, 0.0, -1.0), 0.5, &material_left);
+	Sphere s3(Vec3D(-1.0, 0.0, -1.0), -0.5, &material_left);
 	Sphere s4(Vec3D(1.0, 0.0, -1.0), 0.5, &material_right);
 
 	scene.push_back(&s1);

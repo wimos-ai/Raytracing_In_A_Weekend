@@ -139,6 +139,7 @@
     <ClCompile Include="Shapes.cpp" />
     <ClCompile Include="ThreadPool.cpp" />
     <ClCompile Include="Utills.cpp" />
+    <ClCompile Include="Vec3D.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BlockArray.hpp" />

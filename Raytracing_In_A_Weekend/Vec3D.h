@@ -107,22 +107,29 @@ public:
 	inline bool near_zero() const {
 		// Return true if the vector is close to zero in all dimensions.
 		auto s = 1e-8;
-		return (fabs(m_x) < s) && ((m_y) < s) && ((m_z) < s);
+		return (fabs(m_x) < s) && (fabs(m_y) < s) && (fabs(m_z) < s);
 	}
 
 	inline static Vec3D reflect(const Vec3D& v, const Vec3D& n) {
 		return v - (n * (2 * v.dot(n)));
 	}
 
+	friend Vec3D operator*(const Vec3D& u, const Vec3D& v);
+	friend Vec3D operator*(double d, const Vec3D& other);
+
+	//Derived from snells law: n*sin(theta)=n'*sin(theta')
+	//n is eta
+	inline static Vec3D refract(const Vec3D& ray_dir, const Vec3D& normal, double eta_div_eta_prime) {
+		double cos_theta = fmin(-ray_dir.dot(normal), 1.0);
+		Vec3D r_out_perp = eta_div_eta_prime * (ray_dir + cos_theta * normal);
+		Vec3D r_out_parallel = -sqrt(fabs(1.0 - r_out_perp.length_squared())) * normal;
+		return r_out_perp + r_out_parallel;
+	}
+
 private:
 	double m_x, m_y, m_z;
 };
 
-inline Vec3D operator*(double d, const Vec3D& other) {
-	return other * d;
-}
-inline Vec3D operator*(const Vec3D& u, const Vec3D& v) {
-	return Vec3D(u.x() * v.x(), u.y() * v.y(), u.z() * v.z());
-}
+
 
 using Color3D = Vec3D;
