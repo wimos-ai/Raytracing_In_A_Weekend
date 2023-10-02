@@ -122,7 +122,7 @@ inline Vec3D operator*(double d, const Vec3D& other) {
 	return other * d;
 }
 inline Vec3D operator*(const Vec3D& u, const Vec3D& v) {
-	return Vec3D(u.x() * v.x(), u.y() * v.y(), u.x() * v.z());
+	return Vec3D(u.x() * v.x(), u.y() * v.y(), u.z() * v.z());
 }
 
 using Color3D = Vec3D;

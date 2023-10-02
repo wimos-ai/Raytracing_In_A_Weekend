@@ -5,19 +5,19 @@
 #include "Interval.h"
 #include "Material.h"
 
-typedef struct HitReccord {
+typedef struct HitRecord {
 	Vec3D point;
 	Vec3D normal;
 	double t;
-	Material* material;
+	const Material* material;
 	bool front_face;
 
 	void set_face_normal(const Ray& ray, const Vec3D& vec);
-}HitReccord;
+}HitRecord;
 
 class Shape {
 public:
-	virtual bool hit(const Ray& ray, const Interval& ray_interval, HitReccord& rec) const = 0;
+	virtual bool hit(const Ray& ray, const Interval& ray_interval, HitRecord& rec) const = 0;
 	virtual ~Shape() = default;
 };
 
@@ -25,13 +25,13 @@ public:
 class Sphere: public Shape
 {
 public:
-	Sphere(Vec3D translation, double radius, Material* mat);
+	Sphere(Vec3D translation, double radius, const Material* mat);
 
-	virtual bool hit(const Ray& ray, const Interval& ray_interval, HitReccord& rec) const override;
+	virtual bool hit(const Ray& ray, const Interval& ray_interval, HitRecord& rec) const override;
 
 private:
-	Vec3D m_translation;
-	double m_radius;
-	Material* m_material;
+	Vec3D const m_translation;
+	double const m_radius;
+	const Material* const m_material;
 };
 

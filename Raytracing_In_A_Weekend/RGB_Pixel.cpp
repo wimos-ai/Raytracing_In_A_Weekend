@@ -10,9 +10,9 @@ namespace {
 }
 
 RGB_Pixel::RGB_Pixel(const Vec3D& other):
-	r(static_cast<uint8_t>(255.999 * linear_to_gamma(other.x()))),
-	g(static_cast<uint8_t>(255.999 * linear_to_gamma(other.y()))),
-	b(static_cast<uint8_t>(255.999 * linear_to_gamma(other.z())))
+	r(static_cast<uint8_t>(255 * linear_to_gamma(other.x()))),
+	g(static_cast<uint8_t>(255 * linear_to_gamma(other.y()))),
+	b(static_cast<uint8_t>(255 * linear_to_gamma(other.z())))
 {
 	assert((other.x() <= 1.0) && (other.y() <= 1.0) && (other.z() <= 1.0));
 }

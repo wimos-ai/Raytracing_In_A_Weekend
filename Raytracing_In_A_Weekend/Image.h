@@ -7,14 +7,14 @@
 class Image
 {
 public:
-	inline Image(size_t width, size_t height) : pixels(width, height) {};
+	inline Image(size_t width, size_t height) : m_pixels(width, height) {};
 
 	inline size_t width() const {
-		return pixels.dim_1();
+		return m_pixels.dim_1();
 	}
 
 	inline size_t height() const {
-		return pixels.dim_2();
+		return m_pixels.dim_2();
 	}
 
 	RGB_Pixel& at(size_t m_x, size_t m_y);
@@ -22,6 +22,6 @@ public:
 	const RGB_Pixel& at(size_t m_x, size_t m_y) const;
 
 private:
-	BlockArray2D<RGB_Pixel> pixels;
+	BlockArray2D<RGB_Pixel> m_pixels;
 };
 

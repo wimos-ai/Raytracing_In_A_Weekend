@@ -30,7 +30,7 @@ private:
 	std::mutex m_tasks_mutex;
 	std::queue<Task> m_tasks;
 	std::vector<std::thread> m_worker_thds;
-	semaphore m_task_sem;
+	Semaphore m_task_sem;
 	std::atomic_bool m_running;
 	std::atomic_bool m_accepting;
 };

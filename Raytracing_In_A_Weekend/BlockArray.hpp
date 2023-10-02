@@ -1,8 +1,10 @@
 #pragma once
 
 #include <cstddef>	 //std::size_t
+#include <algorithm> //std::copy
+#ifdef _DEBUG
 #include <stdexcept> // std::out_of_range
-#include <cstring>	 //memcpy
+#endif
 
 #define UNUSED(m_x) (void)m_x;
 

@@ -31,7 +31,7 @@ Camera::Camera(Vec3D pos, Vec3D cam_dir, Vec3D image_up, double focal_len, size_
 	if (cfg != nullptr && cfg->num_thds != 0)
 		m_num_thds = cfg->num_thds;
 	else
-		m_num_thds = 1;
+		m_num_thds = Camera::DEFAULT_NUM_THREADS;
 
 	//Samples per pixel
 	if (cfg != nullptr && cfg->samples_per_pixel != 0)
@@ -106,8 +106,7 @@ RGB_Pixel Camera::compute_color(size_t width, size_t height, const HittableScene
 		Ray ray = ray_to_pixel(width, height);
 		color = color + get_ray_color(ray, scene, m_max_depth);
 	}
-	color = color / static_cast<double>(m_samples_per_pixel);
-	return RGB_Pixel(color);
+	return RGB_Pixel::normalize_average(color, m_samples_per_pixel);
 }
 
 Vec3D Camera::get_ray_color(const Ray& ray, const HittableScene& scene, int depth)
@@ -117,10 +116,10 @@ Vec3D Camera::get_ray_color(const Ray& ray, const HittableScene& scene, int dept
 		return Color3D(0, 0, 0);
 	}
 
-	HitReccord rec;
+	HitRecord rec;
 	//Having the interval be in the + direction prevents 
 	//Us from drawing stuff that is behind the camera
-	if (scene.hit(ray, Interval(0.001, Interval::c_INFINITY), rec))
+	if (scene.hit(ray, Interval(0.001, Interval::INF), rec))
 	{
 		Ray scattered;
 		Color3D attenuation;
@@ -128,9 +127,7 @@ Vec3D Camera::get_ray_color(const Ray& ray, const HittableScene& scene, int dept
 			return attenuation * get_ray_color(scattered, scene, depth - 1);
 		return Color3D(0, 0, 0);
 	}
-	Vec3D unit_direction = ray.direction().unit_vec();
-	auto a = 0.5 * (unit_direction.y() + 1.0);
-	return (1.0 - a) * Vec3D(1.0, 1.0, 1.0) + a * Vec3D(0.5, 0.7, 1.0);
+	return Camera::as_sky_color(ray);
 }
 
 Vec3D Camera::pixel_sample_square() const
@@ -139,6 +136,13 @@ Vec3D Camera::pixel_sample_square() const
 	auto px = -0.5 + RandUtils::rand();
 	auto py = -0.5 + RandUtils::rand();
 	return (px * m_delta_width) + (py * m_delta_height);
+}
+
+Color3D Camera::as_sky_color(const Ray& sky_ray)
+{
+	Vec3D unit_direction = sky_ray.direction().unit_vec();
+	auto a = 0.5 * (unit_direction.y() + 1.0);
+	return (1.0 - a) * Vec3D(1.0, 1.0, 1.0) + a * Vec3D(0.5, 0.7, 1.0);
 }
 
 

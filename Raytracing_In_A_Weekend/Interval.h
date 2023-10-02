@@ -6,9 +6,9 @@
 class Interval
 {
 public:
-	static constexpr double c_INFINITY = std::numeric_limits<double>::infinity();
+	static constexpr double INF = std::numeric_limits<double>::infinity();
 
-	inline constexpr Interval() : m_min(-Interval::c_INFINITY), m_max(Interval::c_INFINITY) {};
+	inline constexpr Interval() : m_min(-Interval::INF), m_max(Interval::INF) {};
 
 	inline Interval(double min, double max) : m_min(min), m_max(max) {};
 

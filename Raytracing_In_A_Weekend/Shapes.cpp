@@ -1,17 +1,17 @@
 #include "Shapes.h"
 #include <cassert>
 
-void HitReccord::set_face_normal(const Ray& ray, const Vec3D& vec) {
+void HitRecord::set_face_normal(const Ray& ray, const Vec3D& vec) {
 	front_face = ray.direction().dot(vec) < 0;
 	normal = front_face ? vec : -1 * vec;
 	//assert(vec.unit_vec() == vec);
 }
 
-Sphere::Sphere(Vec3D translation, double radius, Material* mat) : m_translation(translation), m_radius(radius), m_material(mat)
+Sphere::Sphere(Vec3D translation, double radius, const Material* mat) : m_translation(translation), m_radius(radius), m_material(mat)
 {
 }
 
-bool Sphere::hit(const Ray& ray, const Interval& ray_interval, HitReccord& rec) const
+bool Sphere::hit(const Ray& ray, const Interval& ray_interval, HitRecord& rec) const
 {
 	const Vec3D oc = ray.origin() - this->m_translation;
 	const double a = ray.direction().length_squared();
@@ -32,8 +32,6 @@ bool Sphere::hit(const Ray& ray, const Interval& ray_interval, HitReccord& rec) 
 		if (!ray_interval.surrounds(root))
 			return false;
 	}
-
-
 
 	rec.t = root;
 	rec.point = ray.at(root);

@@ -6,6 +6,6 @@
 class HittableScene: public std::vector<Shape*>, public Shape
 {
 public:
-	bool hit(const Ray& ray, const Interval& ray_interval, HitReccord& rec) const override;
+	bool hit(const Ray& ray, const Interval& ray_interval, HitRecord& rec) const override;
 };
 

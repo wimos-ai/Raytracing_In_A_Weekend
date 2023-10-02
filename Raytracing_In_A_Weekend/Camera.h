@@ -1,5 +1,5 @@
 #pragma once
-#include <utility>
+#include <utility> //std::pair
 
 #include "Vec3D.h"
 #include "Ray.h"
@@ -35,6 +35,7 @@ private:
 	RGB_Pixel compute_color(size_t width, size_t height, const HittableScene& scene);
 	Vec3D get_ray_color(const Ray& ray, const HittableScene& scene, int depth);
 	Vec3D pixel_sample_square() const;
+	static Color3D as_sky_color(const Ray& sky_ray);
 
 private:
 	
@@ -52,6 +53,7 @@ private:
 private:
 	static constexpr size_t DEFAULT_SAMPLES_PER_PIXEL = 10;
 	static constexpr size_t DEFAULT_MAX_DEPTH = 10;
+	static const size_t DEFAULT_NUM_THREADS = 1;
 };
 
 

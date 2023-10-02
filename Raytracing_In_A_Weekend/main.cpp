@@ -16,13 +16,13 @@ int main()
 
 	auto sz = Camera::width_height_from_aspect_ratio(1000, 16.0 / 9.0);
 
-	
+
 
 
 	Camera::CameraConfig cfg = { 0 };
 	cfg.samples_per_pixel = 100;
 	cfg.max_depth = 100;
-	cfg.num_thds = 19;
+	cfg.num_thds = 20;
 
 	// Vec3D pos, Vec3D cam_dir, Vec3D image_up, double focal_len, size_t pix_width, size_t pix_height
 	Camera cam(Vec3D(0, 0, 0), Vec3D(0, 0, -2), Vec3D(0, -1, 0), 1.0, sz.first, sz.second, &cfg);
@@ -43,10 +43,16 @@ int main()
 	//sceen.push_back(&s3);
 	//sceen.push_back(&s4);
 
-	Lambertian material_ground = Lambertian(Color3D(0.8, 0.8, 0.0));
-	Lambertian material_center = Lambertian(Color3D(0.7, 0.3, 0.3));
-	Metal material_left = Metal(Color3D(0.8, 0.8, 0.8));
-	Metal material_right = Metal(Color3D(0.8, 0.6, 0.2));
+	const Color3D RED(1, 0, 0);
+	const Color3D GREEN(0, 1, 0);
+	const Color3D BLUE(0, 0, 1);
+	const Color3D WHITE(1, 1, 1);
+
+
+	Lambertian material_ground(RED);
+	Lambertian material_center(GREEN);
+	Lambertian material_left(BLUE);
+	Lambertian material_right(WHITE);
 
 	Sphere s1(Vec3D(0.0, -100.5, -1.0), 100.0, &material_ground);
 	Sphere s2(Vec3D(0.0, 0.0, -1.0), 0.5, &material_center);
@@ -57,9 +63,6 @@ int main()
 	sceen.push_back(&s1);
 	sceen.push_back(&s3);
 	sceen.push_back(&s4);
-
-
-	
 
 	auto im = cam.snap(sceen);
 
