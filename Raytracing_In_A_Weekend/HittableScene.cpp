@@ -19,3 +19,16 @@ bool HittableScene::hit(const Ray& ray, const Interval& ray_interval, HitRecord&
 	}
 	return hit_something;
 }
+
+void HittableScene::take_ownership(void* obj)
+{
+	m_owned_objs.push_back(obj);
+}
+
+HittableScene::~HittableScene()
+{
+	for (size_t i = 0; i < m_owned_objs.size(); i++)
+	{
+		free(m_owned_objs[i]);
+	}
+}

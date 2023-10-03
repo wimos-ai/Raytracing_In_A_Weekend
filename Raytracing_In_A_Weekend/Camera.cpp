@@ -13,7 +13,7 @@
 //size_t m_width;				//Number of horizontal Pixels
 //size_t m_height;			//Number of vertical pixels
 
-Camera::Camera(Vec3D pos, Vec3D cam_dir, Vec3D image_up, double focal_len, size_t pix_width, size_t pix_height, CameraConfig* cfg) : m_direction(cam_dir.unit_vec()), m_width(pix_width), m_height(pix_height)
+Camera::Camera(const Vec3D& pos, const Vec3D& cam_dir, const Vec3D& image_up, double focal_len, size_t pix_width, size_t pix_height, CameraConfig* cfg) : m_direction(cam_dir.unit_vec()), m_width(pix_width), m_height(pix_height)
 {
 	m_focal_point = pos - cam_dir.unit_vec() * focal_len;
 
@@ -21,7 +21,7 @@ Camera::Camera(Vec3D pos, Vec3D cam_dir, Vec3D image_up, double focal_len, size_
 
 
 	m_delta_width = image_up.cross(cam_dir).unit_vec() * units_per_pixel;
-	m_delta_height = image_up.unit_vec() * units_per_pixel;
+	m_delta_height = cam_dir.cross(m_delta_width).unit_vec() * units_per_pixel;
 
 
 	m_viewport_corner = pos - ((m_delta_width * static_cast<double>(pix_width) + m_delta_height * static_cast<double>(pix_height)) / 2.0);
@@ -46,9 +46,9 @@ Camera::Camera(Vec3D pos, Vec3D cam_dir, Vec3D image_up, double focal_len, size_
 		m_max_depth = Camera::DEFAULT_MAX_DEPTH;
 
 
-	assert(image_up.dot(cam_dir) == 0);
-	assert(m_delta_height.dot(m_delta_width) == 0);
-	assert(m_delta_height.cross(m_delta_width).unit_vec() == (cam_dir.unit_vec() * -1));
+	//assert(image_up.dot(cam_dir) == 0);
+	//assert(m_delta_height.dot(m_delta_width) == 0);
+	//assert(m_delta_height.cross(m_delta_width).unit_vec() == (cam_dir.unit_vec() * -1));
 }
 
 

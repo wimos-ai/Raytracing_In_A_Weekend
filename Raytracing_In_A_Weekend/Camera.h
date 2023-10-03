@@ -22,7 +22,7 @@ public:
 	}CameraConfig;
 
 
-	Camera(Vec3D pos, Vec3D direction, Vec3D image_up, double focal_len, size_t pix_width, size_t pix_height, CameraConfig* cfg = nullptr);
+	Camera(const Vec3D& pos, const Vec3D& direction, const Vec3D& image_up, double focal_len, size_t pix_width, size_t pix_height, CameraConfig* cfg = nullptr);
 	Camera() = delete;
 
 	Image snap(const HittableScene& scene);

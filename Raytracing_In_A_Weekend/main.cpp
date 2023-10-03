@@ -11,6 +11,99 @@
 #include "Shapes.h"
 #include "Material.h"
 
+void final_render() {
+	HittableScene world;
+
+	{
+		Lambertian* ground_material = new Lambertian(Color3D(0.5, 0.5, 0.5));
+		Sphere* s2 = new Sphere(Vec3D(0, -1000, 0), 1000, ground_material);
+
+		world.push_back(s2);
+		world.take_ownership(ground_material);
+		world.take_ownership(s2);
+	}
+
+
+	for (int a = -11; a < 11; a++) {
+		for (int b = -11; b < 11; b++) {
+			auto choose_mat = RandUtils::rand();
+			Vec3D center(a + 0.9 * RandUtils::rand(), 0.2, b + 0.9 * RandUtils::rand());
+
+			if ((center - Vec3D(4, 0.2, 0)).length() > 0.9) {
+				if (choose_mat < 0.8) {
+					// diffuse
+					auto albedo = Vec3D::random() * Vec3D::random();
+					Material*  sphere_material = new Lambertian(albedo);
+					Sphere* s = new Sphere(center, 0.2, sphere_material);
+					world.push_back(s);
+					world.take_ownership(sphere_material);
+					world.take_ownership(s);
+				}
+				else if (choose_mat < 0.95) {
+					// metal
+					Vec3D albedo = Vec3D::random(Interval(0.5,1));
+					double fuzz = RandUtils::rand(Interval(0, 0.5));
+					Material* sphere_material = new FuzzyMetal(albedo, fuzz);
+					Sphere* s = new Sphere(center, 0.2, sphere_material);
+					world.push_back(s);
+					world.take_ownership(sphere_material);
+					world.take_ownership(s);
+				}
+				else {
+					// glass
+					Material* sphere_material = new Dielectric(1.5);
+					Sphere* s = new Sphere(center, 0.2, sphere_material);
+					world.push_back(s);
+					world.take_ownership(sphere_material);
+					world.take_ownership(s);
+				}
+			}
+		}
+	}
+
+	auto material1 = new Dielectric(1.5);
+	Sphere* s1 = new Sphere(Vec3D(0, 1, 0), 1.0, material1);
+	world.push_back(s1);
+	world.take_ownership(s1);
+	world.take_ownership(material1);
+
+	auto material2 = new Lambertian(Color3D(0.4, 0.2, 0.1));
+	Sphere* s2 = new Sphere(Vec3D(-4, 1, 0), 1.0, material2);
+	world.push_back(s2);
+	world.take_ownership(s2);
+	world.take_ownership(material2);
+
+	//auto material3 = make_shared<metal>(color(0.7, 0.6, 0.5), 0.0);
+	//world.add(make_shared<sphere>(Vec3D(4, 1, 0), 1.0, material3));
+	auto material3 = new FuzzyMetal(Vec3D(0.7, 0.6, 0.5), 0.0);
+	Sphere* s3 = new Sphere(Vec3D(4, 1, 0), 1.0, material3);
+	world.push_back(s3);
+	world.take_ownership(s3);
+	world.take_ownership(material3);
+
+
+	auto sz = Camera::width_height_from_aspect_ratio(600, 16.0 / 9.0);
+	Camera::CameraConfig cfg = { 0 };
+	cfg.samples_per_pixel = 50;
+	cfg.max_depth = 50;
+	cfg.num_thds = 1;
+	
+
+	//cam.vfov = 20;
+	//cam.lookfrom = Vec3D(13, 2, 3);
+	//cam.lookat = Vec3D(0, 0, 0);
+	//cam.vup = Vec3D(0, 1, 0);
+
+	//cam.defocus_angle = 0.6;
+	//cam.focus_dist = 10.0;
+
+	Camera cam(Vec3D(13, 2, 3), Vec3D(-13, -2, -3), Vec3D(0, -1, 0), 10, sz.first, sz.second, &cfg);
+
+	Image im = cam.snap(world);
+
+	BMPImageSaver::save(im, "image.bmp");
+}
+
 
 void  img_13_shiny_metal() {
 	auto sz = Camera::width_height_from_aspect_ratio(1000, 16.0 / 9.0);
@@ -18,10 +111,10 @@ void  img_13_shiny_metal() {
 	Camera::CameraConfig cfg = { 0 };
 	cfg.samples_per_pixel = 100;
 	cfg.max_depth = 100;
-	cfg.num_thds = 20;
+	cfg.num_thds = 1;
 
 	// Vec3D pos, Vec3D cam_dir, Vec3D image_up, double focal_len, size_t pix_width, size_t pix_height
-	Camera cam(Vec3D(0, 0, 0), Vec3D(0, 0, -2), Vec3D(0, -1, 0), 1.0, sz.first, sz.second, &cfg);
+	Camera cam(Vec3D(0, 2, 0), Vec3D(0, -2, -2), Vec3D(0, -1, 0), 1.0, sz.first, sz.second, &cfg);
 
 	HittableScene scene;
 	Lambertian material_ground(Color3D(0.8, 0.8, 0.0));
@@ -88,5 +181,5 @@ void interesting_green() {
 
 int main()
 {
-	img_13_shiny_metal();
+	final_render();
 }
