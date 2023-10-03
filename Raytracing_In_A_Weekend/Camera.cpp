@@ -13,7 +13,7 @@
 //size_t m_width;				//Number of horizontal Pixels
 //size_t m_height;			//Number of vertical pixels
 
-Camera::Camera(Vec3D pos, Vec3D cam_dir, Vec3D image_up, double focal_len, size_t pix_width, size_t pix_height, CameraConfig* cfg) : m_direction(cam_dir.unit_vec()), m_height(pix_height), m_width(pix_width)
+Camera::Camera(Vec3D pos, Vec3D cam_dir, Vec3D image_up, double focal_len, size_t pix_width, size_t pix_height, CameraConfig* cfg) : m_direction(cam_dir.unit_vec()), m_width(pix_width), m_height(pix_height)
 {
 	m_focal_point = pos - cam_dir.unit_vec() * focal_len;
 
@@ -109,7 +109,7 @@ RGB_Pixel Camera::compute_color(size_t width, size_t height, const HittableScene
 	return RGB_Pixel::normalize_average(color, m_samples_per_pixel);
 }
 
-Vec3D Camera::get_ray_color(const Ray& ray, const HittableScene& scene, int depth)
+Vec3D Camera::get_ray_color(const Ray& ray, const HittableScene& scene, size_t depth)
 {
 	if (depth <= 0)
 	{
@@ -148,7 +148,7 @@ Color3D Camera::as_sky_color(const Ray& sky_ray)
 
 std::pair<size_t, size_t> Camera::width_height_from_aspect_ratio(size_t width, double aspect_ratio) {
 
-	size_t image_height = static_cast<size_t>(width / aspect_ratio);
+	size_t image_height = static_cast<size_t>((double)width / aspect_ratio);
 	image_height = (image_height < 1) ? 1 : image_height;
 	return{ width, image_height };
 

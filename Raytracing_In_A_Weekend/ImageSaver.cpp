@@ -275,7 +275,7 @@ void PPMImageSaver::save(const Image& im, const char* fp)
 		std::exit(-1);
 	}
 
-	fprintf(file_ptr, "P3\n%llu %llu\n255\n", im.width(), im.height());
+	fprintf(file_ptr, "P3\n%zu %zu\n255\n", im.width(), im.height());
 
 
 	for (size_t h = 0; h < im.height(); h++)
@@ -314,7 +314,7 @@ void BMPImageSaver::save(const Image& im, const char* filename) {
 	writeBitmapInfoHeader(file, width, height);
 
 	// Write pixel data
-	for (signed long long y = height - 1; y >= 0; y--) {
+	for (long long y = ((long long)height) - 1; y >= 0; y--) {
 		for (size_t x = 0; x < width; x++) {
 			RGB_Pixel pixel = im.at(x, y);
 			fputc(pixel.b, file);
@@ -332,7 +332,7 @@ void BMPImageSaver::save(const Image& im, const char* filename) {
 
 
 void BMPImageSaver::writeBitmapFileHeader(FILE* file, size_t width, size_t height) {
-	int fileSize = 54 + 3 * width * height; // 54-byte header + RGB data
+	int32_t fileSize = static_cast<int32_t>(54 + 3 * width * height); // 54-byte header + RGB data
 	fputc('B', file);
 	fputc('M', file);
 	writeInt32(file, fileSize);
@@ -343,8 +343,8 @@ void BMPImageSaver::writeBitmapFileHeader(FILE* file, size_t width, size_t heigh
 
 void BMPImageSaver::writeBitmapInfoHeader(FILE* file, size_t width, size_t height) {
 	writeInt32(file, 40); // Info header size
-	writeInt32(file, width);
-	writeInt32(file, height);
+	writeInt32(file, static_cast<int32_t>(width));
+	writeInt32(file, static_cast<int32_t>(height));
 	writeInt16(file, 1); // Number of color planes
 	writeInt16(file, 24); // Bits per pixel
 	writeInt32(file, 0); // Compression method (none)

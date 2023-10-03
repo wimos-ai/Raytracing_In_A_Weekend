@@ -16,7 +16,7 @@ void Semaphore::release() {
 	if (ReleaseSemaphore((HANDLE)m_win_hdl, 1, NULL) == 0)
 	{
 		char err_msg[255];
-		sprintf_s(err_msg, "Error in Semaphore::release. ReleaseSemaphore failed with %x.", GetLastError());
+		sprintf_s(err_msg, "Error in Semaphore::release. ReleaseSemaphore failed with %lx.", GetLastError());
 		perror(err_msg);
 		exit(-1);
 	}
@@ -27,7 +27,7 @@ void Semaphore::acquire() {
 	if (ret_val != WAIT_OBJECT_0)
 	{
 		char err_msg[255];
-		sprintf_s(err_msg, "Error in Semaphore::acquire. WaitForSingleObject failed with %x.", ret_val);
+		sprintf_s(err_msg, "Error in Semaphore::acquire. WaitForSingleObject failed with %lx.", ret_val);
 		perror(err_msg);
 		exit(-1);
 	}
@@ -45,7 +45,7 @@ bool Semaphore::try_acquire() {
 	}
 	else {
 		char err_msg[255];
-		sprintf_s(err_msg, "Error in Semaphore::try_acquire. WaitForSingleObject failed with %x.", ret_val);
+		sprintf_s(err_msg, "Error in Semaphore::try_acquire. WaitForSingleObject failed with %lx.", ret_val);
 		perror(err_msg);
 		exit(-1);
 		return false;

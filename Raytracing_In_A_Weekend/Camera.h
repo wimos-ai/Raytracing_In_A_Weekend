@@ -33,7 +33,7 @@ private:
 	Ray ray_to_pixel(size_t width, size_t height);
 	void compute_row(Image& im_out, size_t row_idx, const HittableScene& scene);
 	RGB_Pixel compute_color(size_t width, size_t height, const HittableScene& scene);
-	Vec3D get_ray_color(const Ray& ray, const HittableScene& scene, int depth);
+	Vec3D get_ray_color(const Ray& ray, const HittableScene& scene, size_t depth);
 	Vec3D pixel_sample_square() const;
 	static Color3D as_sky_color(const Ray& sky_ray);
 

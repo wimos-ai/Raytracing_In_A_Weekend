@@ -14,7 +14,7 @@ public:
 
 class Lambertian : public Material {
 public:
-    inline Lambertian(const Color3D& a) : m_albedo(a) {};
+    inline explicit constexpr Lambertian(const Color3D& a) : m_albedo(a) {};
 
     virtual bool scatter(const Ray& r_in, const HitRecord& rec, Color3D& attenuation, Ray& scattered) const override;
 
@@ -24,7 +24,7 @@ private:
 
 class Metal : public Material {
 public:
-    inline Metal(const Color3D& a) : m_albedo(a) {}
+    inline explicit constexpr Metal(const Color3D& a) : m_albedo(a) {}
 
     bool scatter(const Ray& r_in, const HitRecord& rec, Color3D& attenuation, Ray& scattered) const override;
 

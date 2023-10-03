@@ -4,7 +4,7 @@
 
 namespace {
 	bool seed_rand() {
-		std::srand(time(nullptr));
+		std::srand(static_cast<unsigned int>(time(nullptr)));
 		return true;
 	}
 }

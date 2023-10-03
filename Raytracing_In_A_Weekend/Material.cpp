@@ -1,7 +1,7 @@
 #include "Material.h"
 #include "Shapes.h"
 
-bool Lambertian::scatter(const Ray& r_in, const HitRecord& rec, Color3D& attenuation, Ray& scattered) const
+bool Lambertian::scatter(const Ray&, const HitRecord& rec, Color3D& attenuation, Ray& scattered) const
 {
 	Vec3D scatter_direction = rec.normal + Vec3D::random_unit_vec();
 	// Catch degenerate scatter direction

@@ -25,7 +25,7 @@ public:
 class Sphere: public Shape
 {
 public:
-	Sphere(Vec3D translation, double radius, const Material* mat);
+	Sphere(const Vec3D& translation, double radius, const Material* mat);
 
 	virtual bool hit(const Ray& ray, const Interval& ray_interval, HitRecord& rec) const override;
 

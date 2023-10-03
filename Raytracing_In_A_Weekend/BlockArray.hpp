@@ -73,7 +73,7 @@ public:
 			return *this;
 
 		// Release any resource we're holding
-		delete m_arr;
+		delete[] m_arr;
 
 		// Copy the resource
 		m_arr = new T[other.m_dim_1, other.m_dim_2];
@@ -105,7 +105,7 @@ public:
 			return *this;
 
 		// Release any resource we're holding
-		delete m_arr;
+		delete[] m_arr;
 
 		// Transfer ownership of other.m_arr to self
 		m_arr = other.m_arr;

@@ -61,15 +61,15 @@ public:
 	}
 
 	inline Vec3D cross(const Vec3D& other) const {
-		const double x = this->m_y * other.m_z - this->m_z * other.m_y;
-		const double y = this->m_z * other.m_x - this->m_x * other.m_z;
-		const double z = this->m_x * other.m_y - this->m_y * other.m_x;
-		return Vec3D(x, y, z);
+		const double i_x = this->m_y * other.m_z - this->m_z * other.m_y;
+		const double i_y = this->m_z * other.m_x - this->m_x * other.m_z;
+		const double i_z = this->m_x * other.m_y - this->m_y * other.m_x;
+		return Vec3D(i_x, i_y, i_z);
 	}
 
 	inline Vec3D unit_vec() const {
-		double length = this->length();
-		return *this / length;
+		double i_length = this->length();
+		return *this / i_length;
 	}
 
 	inline bool operator==(const Vec3D& other) const {

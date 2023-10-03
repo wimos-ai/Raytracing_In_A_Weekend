@@ -7,7 +7,7 @@ void HitRecord::set_face_normal(const Ray& ray, const Vec3D& vec) {
 	//assert(vec.unit_vec() == vec);
 }
 
-Sphere::Sphere(Vec3D translation, double radius, const Material* mat) : m_translation(translation), m_radius(radius), m_material(mat)
+Sphere::Sphere(const Vec3D& translation, double radius, const Material* mat) : m_translation(translation), m_radius(radius), m_material(mat)
 {
 }
 
@@ -21,7 +21,7 @@ bool Sphere::hit(const Ray& ray, const Interval& ray_interval, HitRecord& rec) c
 	const double discriminant = half_b * half_b - a * c;
 
 	if (discriminant < 0) {
-		return -false;
+		return false;
 	}
 
 	const double sqrt_disc = std::sqrt(discriminant);
