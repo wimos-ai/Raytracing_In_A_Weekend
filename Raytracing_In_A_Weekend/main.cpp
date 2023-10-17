@@ -86,7 +86,7 @@ void final_render() {
 	Camera::CameraConfig cfg = { 0 };
 	cfg.samples_per_pixel = 50;
 	cfg.max_depth = 50;
-	cfg.num_thds = 1;
+	cfg.num_thds = 8;
 	
 
 	//cam.vfov = 20;

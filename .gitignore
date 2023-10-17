@@ -33,3 +33,7 @@
 /Raytracing_In_A_Weekend/x64
 /.vs/Raytracing_In_A_Weekend
 /x64
+rt_in_a_weekend
+
+# IDE Files
+.vscode
