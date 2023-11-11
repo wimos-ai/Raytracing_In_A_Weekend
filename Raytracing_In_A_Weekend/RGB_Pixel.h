@@ -1,5 +1,8 @@
 #pragma once
 #include <cstdint>
+
+using std::size_t;
+
 class Vec3D;
 typedef struct RGB_Pixel{
 	uint8_t r;
@@ -16,4 +19,3 @@ typedef struct RGB_Pixel{
 	static RGB_Pixel from_normal_vec(const Vec3D& other);
 	static RGB_Pixel normalize_average(const Vec3D& other, size_t num_samples);
 }RGB_Pixel;
-

@@ -1,5 +1,5 @@
 #include "ImageSaver.h"
-#include <cstdio>
+
 
 
 namespace uint8_str_lookup {
@@ -269,11 +269,19 @@ void PPMImageSaver::save(const Image& im, const char* fp)
 {
 	FILE* file_ptr;
 
+#ifdef __STDC_LIB_EXT1__
 	if (fopen_s(&file_ptr, fp, "w") != 0)
 	{
 		std::printf("Error opening file in PPMImageSaver::save routine");
 		std::exit(-1);
 	}
+#else
+	file_ptr = fopen(fp, "w+");
+    if (!fp) {
+        std::printf("Error opening file in PPMImageSaver::save routine");
+		std::exit(-1);
+    }
+#endif
 
 	fprintf(file_ptr, "P3\n%zu %zu\n255\n", im.width(), im.height());
 
@@ -302,12 +310,20 @@ void BMPImageSaver::save(const Image& im, const char* filename) {
 	size_t width = im.width();
 	size_t height = im.height();
 
-	FILE* file;
-	errno_t err = fopen_s(&file, filename, "wb");
-	if (err != 0) {
-		std::printf("Error opening file in BMPImageSaver::save routine");
-		std::exit(-1);
-	}
+	FILE* file = {0};
+	#ifdef __STDC_LIB_EXT1__
+		if (fopen_s(&file, filename, "w") != 0)
+		{
+			std::printf("Error opening file in PPMImageSaver::save routine");
+			std::exit(-1);
+		}
+	#else
+		file = fopen(filename, "w+");
+		if (!file) {
+			std::printf("Error opening file in PPMImageSaver::save routine");
+			std::exit(-1);
+		}
+	#endif
 
 	// BMP header
 	writeBitmapFileHeader(file, width, height);

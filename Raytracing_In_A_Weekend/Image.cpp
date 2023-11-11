@@ -1,4 +1,5 @@
 #include "Image.h"
+#include <cstdint>
 
 RGB_Pixel& Image::at(size_t m_x, size_t m_y)
 {
