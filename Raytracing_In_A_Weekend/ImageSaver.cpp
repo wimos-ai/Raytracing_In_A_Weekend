@@ -1,6 +1,11 @@
 #include "ImageSaver.h"
 
+#if defined(__STDC_LIB_EXT1__) | defined(_MSC_VER)
+	#define  __STDC_WANT_LIB_EXT1__ 1
+	#define USE_FOPEN_SAFE 1
+#endif
 
+#include <stdio.h>
 
 namespace uint8_str_lookup {
 	const char* str[] = {
@@ -269,7 +274,7 @@ void PPMImageSaver::save(const Image& im, const char* fp)
 {
 	FILE* file_ptr;
 
-#ifdef __STDC_LIB_EXT1__
+#ifdef USE_FOPEN_SAFE
 	if (fopen_s(&file_ptr, fp, "w") != 0)
 	{
 		std::printf("Error opening file in PPMImageSaver::save routine");
@@ -311,7 +316,7 @@ void BMPImageSaver::save(const Image& im, const char* filename) {
 	size_t height = im.height();
 
 	FILE* file = {0};
-	#ifdef __STDC_LIB_EXT1__
+	#ifdef USE_FOPEN_SAFE
 		if (fopen_s(&file, filename, "w") != 0)
 		{
 			std::printf("Error opening file in PPMImageSaver::save routine");

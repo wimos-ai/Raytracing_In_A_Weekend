@@ -35,3 +35,18 @@ private:
 	const Material* const m_material;
 };
 
+class Triangle : public Shape {
+public:
+	Triangle(const Vec3D& v0, const Vec3D& v1, const Vec3D& v2, const Material* mat);
+
+	virtual bool hit(const Ray& ray, const Interval& ray_interval, HitRecord& rec) const override;
+
+private:
+	static constexpr Vec3D generate_normal(const Vec3D& v0, const Vec3D& v1, const Vec3D& v2);
+private:
+	Vec3D const m_v0;
+	Vec3D const m_v1;
+	Vec3D const m_v2;
+	Vec3D const m_normal;
+	const Material* const m_material;
+};
