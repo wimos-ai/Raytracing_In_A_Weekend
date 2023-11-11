@@ -4,6 +4,7 @@
 #include "Image.h"
 #include "ImageSaver.h"
 #include "Camera.h"
+#include "Renderer.h"
 
 
 #include "Ray.h"
@@ -83,11 +84,7 @@ void final_render() {
 
 
 	auto sz = Camera::width_height_from_aspect_ratio(600, 16.0 / 9.0);
-	Camera::CameraConfig cfg = { 0 };
-	cfg.samples_per_pixel = 50;
-	cfg.max_depth = 50;
-	cfg.num_thds = 1;
-	
+
 
 	//cam.vfov = 20;
 	//cam.lookfrom = Vec3D(13, 2, 3);
@@ -97,9 +94,11 @@ void final_render() {
 	//cam.defocus_angle = 0.6;
 	//cam.focus_dist = 10.0;
 
-	Camera cam(Vec3D(13, 2, 3), Vec3D(-13, -2, -3), Vec3D(0, -1, 0), 10, sz.first, sz.second, &cfg);
+	Camera cam(Vec3D(13, 2, 3), Vec3D(-13, -2, -3), Vec3D(0, -1, 0), 10, sz.first, sz.second);
 
-	Image im = cam.snap(world);
+	Renderer renderer(50, 50, 20);
+
+	Image im = renderer.render(cam, world);
 
 	BMPImageSaver::save(im, "image.bmp");
 }
@@ -108,13 +107,8 @@ void final_render() {
 void  img_13_shiny_metal() {
 	auto sz = Camera::width_height_from_aspect_ratio(1000, 16.0 / 9.0);
 
-	Camera::CameraConfig cfg = { 0 };
-	cfg.samples_per_pixel = 100;
-	cfg.max_depth = 100;
-	cfg.num_thds = 1;
-
 	// Vec3D pos, Vec3D cam_dir, Vec3D image_up, double focal_len, size_t pix_width, size_t pix_height
-	Camera cam(Vec3D(0, 2, 0), Vec3D(0, -2, -2), Vec3D(0, -1, 0), 1.0, sz.first, sz.second, &cfg);
+	Camera cam(Vec3D(0, 2, 0), Vec3D(0, -2, -2), Vec3D(0, -1, 0), 1.0, sz.first, sz.second);
 
 	HittableScene scene;
 	Lambertian material_ground(Color3D(0.8, 0.8, 0.0));
@@ -132,7 +126,8 @@ void  img_13_shiny_metal() {
 	scene.push_back(&s3);
 	scene.push_back(&s4);
 
-	Image im = cam.snap(scene);
+	Renderer render(100, 100, 1);
+	Image im = render.render(cam, scene);
 
 	BMPImageSaver::save(im, "image.bmp");
 }
@@ -141,14 +136,8 @@ void interesting_green() {
 
 	auto sz = Camera::width_height_from_aspect_ratio(1000, 16.0 / 9.0);
 
-
-	Camera::CameraConfig cfg = { 0 };
-	cfg.samples_per_pixel = 100;
-	cfg.max_depth = 100;
-	cfg.num_thds = 20;
-
 	// Vec3D pos, Vec3D cam_dir, Vec3D image_up, double focal_len, size_t pix_width, size_t pix_height
-	Camera cam(Vec3D(0, 0, 0), Vec3D(0, 0, -2), Vec3D(0, -1, 0), 1.0, sz.first, sz.second, &cfg);
+	Camera cam(Vec3D(0, 0, 0), Vec3D(0, 0, -2), Vec3D(0, -1, 0), 1.0, sz.first, sz.second);
 
 	HittableScene sceen;
 
@@ -173,11 +162,31 @@ void interesting_green() {
 	sceen.push_back(&s3);
 	sceen.push_back(&s4);
 
-	auto im = cam.snap(sceen);
+	Renderer renderer(100, 100, 20);
+	auto im = renderer.render(cam,sceen);
 
 	BMPImageSaver::save(im, "image.bmp");
 }
 
+
+//void forbidden_nacho() {
+//	auto sz = Camera::width_height_from_aspect_ratio(1000, 16.0 / 9.0);
+//
+//	// Vec3D pos, Vec3D cam_dir, Vec3D image_up, double focal_len, size_t pix_width, size_t pix_height
+//	Camera cam(Vec3D(0, 0, 0), Vec3D(0, 0, -2), Vec3D(0, -1, 0), 1.0, sz.first, sz.second);
+//
+//	HittableScene sceen;
+//
+//	Lambertian nacho_stuff(Vec3D(1,1,0));
+//	Triangle t1(Vec3D(0.0, 0.0, -1.0), Vec3D(0.0, -1.0, -1.0), Vec3D(-1, 0.0, -1.0), &nacho_stuff);
+//
+//	sceen.push_back(&t1);
+//
+//	Renderer renderer(100, 100, 20);
+//	auto im = renderer.render(cam,sceen);
+//
+//	BMPImageSaver::save(im, "image.bmp");
+//}
 
 int main()
 {

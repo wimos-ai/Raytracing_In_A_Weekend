@@ -134,6 +134,7 @@
     <ClCompile Include="ImageSaver.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Material.cpp" />
+    <ClCompile Include="Renderer.cpp" />
     <ClCompile Include="RGB_Pixel.cpp" />
     <ClCompile Include="Semaphore.cpp" />
     <ClCompile Include="Shapes.cpp" />
@@ -150,6 +151,7 @@
     <ClInclude Include="ImageSaver.h" />
     <ClInclude Include="Material.h" />
     <ClInclude Include="Ray.h" />
+    <ClInclude Include="Renderer.h" />
     <ClInclude Include="RGB_Pixel.h" />
     <ClInclude Include="Semaphore.h" />
     <ClInclude Include="Shapes.h" />

@@ -6,29 +6,29 @@
 class Vec3D
 {
 public:
-	inline Vec3D() : m_x(0), m_y(0), m_z(0) {};
-	inline Vec3D(double x, double y, double z) : m_x(x), m_y(y), m_z(z) {};
-	inline double& x() {
+	inline constexpr Vec3D() : m_x(0), m_y(0), m_z(0) {};
+	inline constexpr Vec3D(double x, double y, double z) : m_x(x), m_y(y), m_z(z) {};
+	inline double x() {
 		return m_x;
 	}
 
-	inline double& y() {
+	inline double y() {
 		return m_y;
 	}
 
-	inline double& z() {
+	inline double z() {
 		return m_z;
 	}
 
-	inline const double& x() const {
+	inline const double x() const {
 		return m_x;
 	}
 
-	inline const double& y() const {
+	inline const double y() const {
 		return m_y;
 	}
 
-	inline const double& z() const {
+	inline const double z() const {
 		return m_z;
 	}
 
@@ -36,7 +36,7 @@ public:
 		return Vec3D(this->m_x + other.m_x, this->m_y + other.m_y, this->m_z + other.m_z);
 	}
 
-	inline Vec3D operator-(const Vec3D& other) const {
+	inline constexpr Vec3D operator-(const Vec3D& other) const {
 		return Vec3D(this->m_x - other.m_x, this->m_y - other.m_y, this->m_z - other.m_z);
 	}
 
@@ -60,7 +60,7 @@ public:
 		return this->m_x * other.m_x + this->m_y * other.m_y + this->m_z * other.m_z;
 	}
 
-	inline Vec3D cross(const Vec3D& other) const {
+	inline constexpr Vec3D cross(const Vec3D& other) const {
 		const double i_x = this->m_y * other.m_z - this->m_z * other.m_y;
 		const double i_y = this->m_z * other.m_x - this->m_x * other.m_z;
 		const double i_z = this->m_x * other.m_y - this->m_y * other.m_x;
