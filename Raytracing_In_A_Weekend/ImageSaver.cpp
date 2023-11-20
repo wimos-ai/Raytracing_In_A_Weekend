@@ -281,7 +281,7 @@ void PPMImageSaver::save(const Image& im, const char* fp)
 		std::exit(-1);
 	}
 #else
-	file_ptr = fopen(fp, "w+");
+	file_ptr = fopen(fp, "w");
     if (!fp) {
         std::printf("Error opening file in PPMImageSaver::save routine");
 		std::exit(-1);
@@ -317,13 +317,13 @@ void BMPImageSaver::save(const Image& im, const char* filename) {
 
 	FILE* file = {0};
 	#ifdef USE_FOPEN_SAFE
-		if (fopen_s(&file, filename, "w") != 0)
+		if (fopen_s(&file, filename, "wb") != 0)
 		{
 			std::printf("Error opening file in PPMImageSaver::save routine");
 			std::exit(-1);
 		}
 	#else
-		file = fopen(filename, "w+");
+		file = fopen(filename, "wb");
 		if (!file) {
 			std::printf("Error opening file in PPMImageSaver::save routine");
 			std::exit(-1);

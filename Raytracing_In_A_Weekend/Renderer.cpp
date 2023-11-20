@@ -34,7 +34,7 @@ Color3D Renderer::sky_color(const Ray& sky_ray)
 	return (1.0 - a) * Vec3D(1.0, 1.0, 1.0) + a * Vec3D(0.5, 0.7, 1.0);
 }
 
-void Renderer::render_row(Image& im_out, size_t row_idx, const Camera& cam, const HittableScene& scene)
+void Renderer::render_row(Image& im_out, size_t row_idx, const Camera& cam, const HittableScene& scene) const
 {
 	for (size_t i = 0; i < im_out.width(); i++)
 	{
@@ -42,7 +42,7 @@ void Renderer::render_row(Image& im_out, size_t row_idx, const Camera& cam, cons
 	}
 }
 
-RGB_Pixel Renderer::render_pixel(size_t x, size_t y, const Camera& cam, const HittableScene& scene)
+RGB_Pixel Renderer::render_pixel(size_t x, size_t y, const Camera& cam, const HittableScene& scene) const
 {
 	Vec3D color(0, 0, 0);
 	for (size_t i = 0; i < m_samples_per_pixel; i++)
@@ -53,7 +53,7 @@ RGB_Pixel Renderer::render_pixel(size_t x, size_t y, const Camera& cam, const Hi
 	return RGB_Pixel::normalize_average(color, m_samples_per_pixel);
 }
 
-Vec3D Renderer::get_ray_color(const Ray& ray, const HittableScene& scene, size_t depth)
+Vec3D Renderer::get_ray_color(const Ray& ray, const HittableScene& scene, size_t depth) const
 {
 	if (depth <= 0)
 	{

@@ -96,7 +96,7 @@ void final_render() {
 
 	Camera cam(Vec3D(13, 2, 3), Vec3D(-13, -2, -3), Vec3D(0, -1, 0), 10, sz.first, sz.second);
 
-	Renderer renderer(50, 50, 20);
+	Renderer renderer(50, 50, 19);
 
 	Image im = renderer.render(cam, world);
 
