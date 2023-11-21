@@ -136,10 +136,8 @@
     <ClCompile Include="Material.cpp" />
     <ClCompile Include="Renderer.cpp" />
     <ClCompile Include="RGB_Pixel.cpp" />
-    <ClCompile Include="Semaphore.cpp" />
     <ClCompile Include="Shapes.cpp" />
     <ClCompile Include="TaskListExecutor.cpp" />
-    <ClCompile Include="ThreadPool.cpp" />
     <ClCompile Include="Utills.cpp" />
     <ClCompile Include="Vec3D.cpp" />
   </ItemGroup>
@@ -154,10 +152,8 @@
     <ClInclude Include="Ray.h" />
     <ClInclude Include="Renderer.h" />
     <ClInclude Include="RGB_Pixel.h" />
-    <ClInclude Include="Semaphore.h" />
     <ClInclude Include="Shapes.h" />
     <ClInclude Include="TaskListExecutor.h" />
-    <ClInclude Include="ThreadPool.h" />
     <ClInclude Include="Utills.h" />
     <ClInclude Include="Vec3D.h" />
   </ItemGroup>

@@ -7,6 +7,7 @@ void TaskListExecutor::execute_tasks(std::vector<Task> tasks, size_t num_threads
 {
 	std::atomic<size_t> exec_index{ 0 };
 	std::vector<std::thread> thds;
+	thds.reserve(20);
 
 	for (size_t i = 0; i < num_threads; i++)
 	{

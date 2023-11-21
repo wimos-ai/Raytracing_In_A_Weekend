@@ -1,5 +1,7 @@
 #include "Renderer.h"
-#include "ThreadPool.h"
+
+#include "TaskListExecutor.h"
+
 
 Image Renderer::render(const Camera& cam, const HittableScene& scene)
 {
@@ -8,14 +10,19 @@ Image Renderer::render(const Camera& cam, const HittableScene& scene)
 
 	if (m_num_thds > 1)
 	{
-		ThreadPool ray_trace_pool(m_num_thds);
+		//Assemble Tasks
+		std::vector<Task> tasks(im.height());
 		for (size_t j = 0; j < im.height(); ++j) {
 
-			ray_trace_pool.submit_task([this, &im, cam, j, &scene]() {
+			tasks[j] = [this, &im, cam, j, &scene]() {
 				render_row(im, j, cam, scene);
 				}
-			);
+			;
 		}
+
+		//Execute Tasks
+		TaskListExecutor::execute_tasks(tasks, m_num_thds);
+
 	}
 	else {
 		for (size_t j = 0; j < im.height(); ++j) {

@@ -1,6 +1,9 @@
 // Raytracing_In_A_Weekend.cpp : This file contains the 'main' function. Program execution begins and ends there.
 //
 
+#include <chrono>
+#include <iostream>
+
 #include "Image.h"
 #include "ImageSaver.h"
 #include "Camera.h"
@@ -98,7 +101,13 @@ void final_render() {
 
 	Renderer renderer(50, 50, 19);
 
+
+	std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
 	Image im = renderer.render(cam, world);
+	std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
+
+	std::cout << std::chrono::duration_cast<std::chrono::nanoseconds> (end - begin).count()<< '+';
+
 
 	BMPImageSaver::save(im, "image.bmp");
 }
@@ -190,5 +199,10 @@ void interesting_green() {
 
 int main()
 {
-	final_render();
+	std::cout << "THREAD POOL" << std::endl;
+	for (size_t i = 0; i < 10; i++)
+	{
+		final_render();
+	}
+
 }

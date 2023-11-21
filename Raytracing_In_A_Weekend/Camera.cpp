@@ -2,7 +2,6 @@
 #include <cassert>
 #include <limits>
 #include "Utills.h"
-#include "ThreadPool.h"
 #include <cstdio>
 
 //Vec3D m_focal_point;		//Focal Point
