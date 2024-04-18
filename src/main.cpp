@@ -200,9 +200,6 @@ void interesting_green() {
 int main()
 {
 	std::cout << "THREAD POOL" << std::endl;
-	for (size_t i = 0; i < 10; i++)
-	{
-		final_render();
-	}
+	final_render();
 
 }
