@@ -1,0 +1,11 @@
+[submodule "lib/Eigen"]
+	path = lib/Eigen
+	url = https://github.com/PX4/eigen.git
+	branch = 3.4
+[submodule "lib/imgui"]
+	path = lib/imgui
+	url = https://github.com/ocornut/imgui.git
+[submodule "lib/SDL2"]
+	path = lib/SDL2
+	url = https://github.com/libsdl-org/SDL.git
+	branch = SDL2
