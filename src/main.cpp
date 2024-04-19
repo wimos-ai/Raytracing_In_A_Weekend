@@ -10,6 +10,7 @@
 #include "Renderer.h"
 
 
+#include "STL.h"
 #include "Ray.h"
 #include "Vec3D.h"
 #include "Shapes.h"
@@ -199,10 +200,30 @@ void forbidden_nacho() {
 	BMPImageSaver::save(im, "image.bmp");
 }
 
+void ascii_stl_test() {
+	auto sz = Camera::width_height_from_aspect_ratio(1000, 16.0 / 9.0);
+
+	// Vec3D pos, Vec3D cam_dir, Vec3D image_up, double focal_len, size_t pix_width, size_t pix_height
+	Camera cam(Vec3D(0, 0, 0), Vec3D(0, 0, -2), Vec3D(0, -1, 0), 1.0, sz.first, sz.second);
+
+	HittableScene sceen;
+
+	auto stl_color = std::make_unique<Lambertian>(Vec3D(1,1,0));
+	auto stl = std::make_unique<STL>("../minimalASCIIStl.stl", stl_color.get());
+
+	sceen.emplace_back(std::move(stl));
+	sceen.take_ownership(std::move(stl_color));
+
+	Renderer renderer(50, 50, 20);
+	auto im = renderer.render(cam,sceen);
+
+	BMPImageSaver::save(im, "image.bmp");
+}
+
 int main()
 {
 	std::cout << "THREAD POOL" << std::endl;
-	forbidden_nacho();
+	ascii_stl_test();
 	std::cout << std::endl;
 
 }

@@ -33,6 +33,8 @@ add_executable(
     "./src/Camera.cpp"
     "./src/Image.cpp"
     "./src/Material.cpp"
+    "./src/STLLoader.cpp"
+    "./src/STL.cpp"
     ${IMGUI_SRC_FILES}
 )
 
