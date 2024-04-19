@@ -31,7 +31,6 @@ add_executable(
     "./src/main.cpp"
     "./src/Renderer.cpp"
     "./src/Camera.cpp"
-    "./src/Vec3D.cpp"
     "./src/Image.cpp"
     "./src/Material.cpp"
     ${IMGUI_SRC_FILES}
@@ -41,6 +40,7 @@ add_executable(
 target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE lib/imgui)
 target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE lib/imgui/backends)
 target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE include)
+target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE lib/Eigen)
 
 include(CheckIPOSupported)
 check_ipo_supported(RESULT supported OUTPUT error)

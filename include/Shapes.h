@@ -42,7 +42,7 @@ public:
 	virtual bool hit(const Ray& ray, const Interval& ray_interval, HitRecord& rec) const override;
 
 private:
-	static constexpr Vec3D generate_normal(const Vec3D& v0, const Vec3D& v1, const Vec3D& v2);
+	static Vec3D generate_normal(const Vec3D& v0, const Vec3D& v1, const Vec3D& v2);
 private:
 	Vec3D const m_v0;
 	Vec3D const m_v1;

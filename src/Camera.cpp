@@ -12,15 +12,15 @@
 //size_t m_width;				//Number of horizontal Pixels
 //size_t m_height;			//Number of vertical pixels
 
-Camera::Camera(const Vec3D& pos, const Vec3D& cam_dir, const Vec3D& image_up, double focal_len, size_t pix_width, size_t pix_height) : m_direction(cam_dir.unit_vec()), m_width(pix_width), m_height(pix_height)
+Camera::Camera(const Vec3D& pos, const Vec3D& cam_dir, const Vec3D& image_up, double focal_len, size_t pix_width, size_t pix_height) : m_direction(cam_dir.normalized()), m_width(pix_width), m_height(pix_height)
 {
-	m_focal_point = pos - cam_dir.unit_vec() * focal_len;
+	m_focal_point = pos - cam_dir.normalized() * focal_len;
 
-	const double units_per_pixel = image_up.length() * 2.0 / static_cast<double>(pix_height);
+	const double units_per_pixel = image_up.norm() * 2.0 / static_cast<double>(pix_height);
 
 
-	m_delta_width = image_up.cross(cam_dir).unit_vec() * units_per_pixel;
-	m_delta_height = cam_dir.cross(m_delta_width).unit_vec() * units_per_pixel;
+	m_delta_width = image_up.cross(cam_dir).normalized() * units_per_pixel;
+	m_delta_height = cam_dir.cross(m_delta_width).normalized() * units_per_pixel;
 
 
 	m_viewport_corner = pos - ((m_delta_width * static_cast<double>(pix_width) + m_delta_height * static_cast<double>(pix_height)) / 2.0);

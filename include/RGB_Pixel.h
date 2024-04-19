@@ -1,10 +1,10 @@
 #pragma once
 #include <cstdint>
 #include <cstddef>
+#include "Vec3D.h"
 
 using std::size_t;
 
-class Vec3D;
 typedef struct RGB_Pixel{
 	uint8_t r;
 	uint8_t g;

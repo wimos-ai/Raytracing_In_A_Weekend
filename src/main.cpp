@@ -14,6 +14,7 @@
 #include "Vec3D.h"
 #include "Shapes.h"
 #include "Material.h"
+#include "Utills.h"
 
 void final_render() {
 	HittableScene world;
@@ -33,10 +34,10 @@ void final_render() {
 			auto choose_mat = RandUtils::rand();
 			Vec3D center(a + 0.9 * RandUtils::rand(), 0.2, b + 0.9 * RandUtils::rand());
 
-			if ((center - Vec3D(4, 0.2, 0)).length() > 0.9) {
+			if ((center - Vec3D(4, 0.2, 0)).norm() > 0.9) {
 				if (choose_mat < 0.8) {
 					// diffuse
-					auto albedo = Vec3D::random() * Vec3D::random();
+					auto albedo = (randomVec3D().cwiseProduct(randomVec3D())).normalized();
 					Material*  sphere_material = new Lambertian(albedo);
 					Sphere* s = new Sphere(center, 0.2, sphere_material);
 					world.push_back(s);
@@ -45,7 +46,7 @@ void final_render() {
 				}
 				else if (choose_mat < 0.95) {
 					// metal
-					Vec3D albedo = Vec3D::random(Interval(0.5,1));
+					Vec3D albedo = randomVec3D(Interval(0.5,1));
 					double fuzz = RandUtils::rand(Interval(0, 0.5));
 					Material* sphere_material = new FuzzyMetal(albedo, fuzz);
 					Sphere* s = new Sphere(center, 0.2, sphere_material);

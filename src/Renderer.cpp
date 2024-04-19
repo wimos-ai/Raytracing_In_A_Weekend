@@ -36,8 +36,8 @@ Image Renderer::render(const Camera& cam, const HittableScene& scene)
 
 Color3D Renderer::sky_color(const Ray& sky_ray)
 {
-	Vec3D unit_direction = sky_ray.direction().unit_vec();
-	auto a = 0.5 * (unit_direction.y() + 1.0);
+	Vec3D unit_direction = sky_ray.direction().normalized();
+	double a = 0.5 * (unit_direction.y() + 1.0);
 	return (1.0 - a) * Vec3D(1.0, 1.0, 1.0) + a * Vec3D(0.5, 0.7, 1.0);
 }
 
@@ -75,7 +75,7 @@ Vec3D Renderer::get_ray_color(const Ray& ray, const HittableScene& scene, size_t
 		Ray scattered;
 		Color3D attenuation;
 		if (rec.material->scatter(ray, rec, attenuation, scattered))
-			return attenuation * get_ray_color(scattered, scene, depth - 1);
+			return attenuation.cwiseProduct(get_ray_color(scattered, scene, depth - 1));
 		return Color3D(0, 0, 0);
 	}
 	return sky_color(ray);

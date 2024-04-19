@@ -14,9 +14,9 @@ Sphere::Sphere(const Vec3D& translation, double radius, const Material* mat) : m
 bool Sphere::hit(const Ray& ray, const Interval& ray_interval, HitRecord& rec) const
 {
 	const Vec3D oc = ray.origin() - this->m_translation;
-	const double a = ray.direction().length_squared();
+	const double a = ray.direction().squaredNorm();
 	const double half_b = ray.direction().dot(oc);
-	const double c = oc.length_squared() - m_radius * m_radius;
+	const double c = oc.squaredNorm() - m_radius * m_radius;
 
 	const double discriminant = half_b * half_b - a * c;
 
@@ -35,7 +35,7 @@ bool Sphere::hit(const Ray& ray, const Interval& ray_interval, HitRecord& rec) c
 
 	rec.t = root;
 	rec.point = ray.at(root);
-	rec.normal = ((rec.point - m_translation) / m_radius).unit_vec();
+	rec.normal = ((rec.point - m_translation) / m_radius).normalized();
 	rec.set_face_normal(ray, rec.normal);
 	rec.material = m_material;
 
@@ -95,7 +95,7 @@ bool Triangle::hit(const Ray& ray, const Interval& ray_interval, HitRecord& rec)
     return true; // this ray hits the triangle
 }
 
-constexpr Vec3D Triangle::generate_normal(const Vec3D& v0, const Vec3D& v1, const Vec3D& v2)
+Vec3D Triangle::generate_normal(const Vec3D& v0, const Vec3D& v1, const Vec3D& v2)
 {
     // compute the plane's normal
     Vec3D v0v1 = v1 - v0;
