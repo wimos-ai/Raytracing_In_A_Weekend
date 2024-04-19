@@ -42,6 +42,8 @@ bool Sphere::hit(const Ray& ray, const Interval& ray_interval, HitRecord& rec) c
 	return true;
 }
 
+Sphere::~Sphere(){};
+
 bool Triangle::hit(const Ray& ray, const Interval& ray_interval, HitRecord& rec) const
 {
     
@@ -112,3 +114,4 @@ Triangle::Triangle(const Vec3D& v0, const Vec3D& v1, const Vec3D& v2, const Mate
     m_material(mat) 
 {
 }
+Triangle::~Triangle(){};

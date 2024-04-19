@@ -1,13 +1,13 @@
 #pragma once
+#include "Ownable.hpp"
 #include "Ray.h"
 #include "Vec3D.h"
 
 
 struct HitRecord;
-class Material
+class Material : public Ownable
 {
 public:
-	virtual ~Material() = default;
 
 	virtual bool scatter(const Ray& r_in, const HitRecord& rec, Color3D& attenuation, Ray& scattered) const = 0;
 };

@@ -4,6 +4,7 @@
 #include "RGB_Pixel.h"
 #include "Interval.h"
 #include "Material.h"
+#include "Ownable.hpp"
 
 typedef struct HitRecord {
 	Vec3D point;
@@ -15,10 +16,9 @@ typedef struct HitRecord {
 	void set_face_normal(const Ray& ray, const Vec3D& vec);
 }HitRecord;
 
-class Shape {
+class Shape : public Ownable  {
 public:
 	virtual bool hit(const Ray& ray, const Interval& ray_interval, HitRecord& rec) const = 0;
-	virtual ~Shape() = default;
 };
 
 
@@ -28,6 +28,8 @@ public:
 	Sphere(const Vec3D& translation, double radius, const Material* mat);
 
 	virtual bool hit(const Ray& ray, const Interval& ray_interval, HitRecord& rec) const override;
+
+	~Sphere() override;
 
 private:
 	Vec3D const m_translation;
@@ -40,6 +42,8 @@ public:
 	Triangle(const Vec3D& v0, const Vec3D& v1, const Vec3D& v2, const Material* mat);
 
 	virtual bool hit(const Ray& ray, const Interval& ray_interval, HitRecord& rec) const override;
+
+	~Triangle() override;
 
 private:
 	static Vec3D generate_normal(const Vec3D& v0, const Vec3D& v1, const Vec3D& v2);
