@@ -179,28 +179,30 @@ void interesting_green() {
 }
 
 
-//void forbidden_nacho() {
-//	auto sz = Camera::width_height_from_aspect_ratio(1000, 16.0 / 9.0);
-//
-//	// Vec3D pos, Vec3D cam_dir, Vec3D image_up, double focal_len, size_t pix_width, size_t pix_height
-//	Camera cam(Vec3D(0, 0, 0), Vec3D(0, 0, -2), Vec3D(0, -1, 0), 1.0, sz.first, sz.second);
-//
-//	HittableScene sceen;
-//
-//	Lambertian nacho_stuff(Vec3D(1,1,0));
-//	Triangle t1(Vec3D(0.0, 0.0, -1.0), Vec3D(0.0, -1.0, -1.0), Vec3D(-1, 0.0, -1.0), &nacho_stuff);
-//
-//	sceen.push_back(&t1);
-//
-//	Renderer renderer(100, 100, 20);
-//	auto im = renderer.render(cam,sceen);
-//
-//	BMPImageSaver::save(im, "image.bmp");
-//}
+void forbidden_nacho() {
+	auto sz = Camera::width_height_from_aspect_ratio(1000, 16.0 / 9.0);
+
+	// Vec3D pos, Vec3D cam_dir, Vec3D image_up, double focal_len, size_t pix_width, size_t pix_height
+	Camera cam(Vec3D(0, 0, 0), Vec3D(0, 0, -2), Vec3D(0, -1, 0), 1.0, sz.first, sz.second);
+
+	HittableScene sceen;
+
+	Lambertian nacho_stuff(Vec3D(1,1,0));
+	Triangle t1(Vec3D(0.0, 0.0, -1.0), Vec3D(0.0, -1.0, -1.0), Vec3D(-1, -1, -1.0), &nacho_stuff);
+	//Sphere t1(Vec3D(-1,-1, -1.0),1, &nacho_stuff);
+
+	sceen.push_back(&t1);
+
+	Renderer renderer(50, 50, 20);
+	auto im = renderer.render(cam,sceen);
+
+	BMPImageSaver::save(im, "image.bmp");
+}
 
 int main()
 {
 	std::cout << "THREAD POOL" << std::endl;
-	final_render();
+	forbidden_nacho();
+	std::cout << std::endl;
 
 }

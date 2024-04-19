@@ -87,8 +87,8 @@ bool Triangle::hit(const Ray& ray, const Interval& ray_interval, HitRecord& rec)
     if (m_normal.dot(C) < 0) return false; // P is on the right side;
 
     rec.t = t;
-    rec.point = P;
-    rec.normal = m_normal;
+    rec.point = -P;
+    rec.normal = m_normal.normalized();
     rec.set_face_normal(ray, rec.normal);
     rec.material = m_material;
     

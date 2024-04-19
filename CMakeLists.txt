@@ -52,4 +52,13 @@ else()
     message(STATUS "IPO / LTO not supported: <${error}>")
 endif()
 
+add_library(sse4_1 INTERFACE IMPORTED)
+if(MSVC)
+    message(STATUS "Loaded /arch:SSE4.1")
+    target_compile_options(sse4_1 INTERFACE /arch:SSE4.1)
+else()
+    message(STATUS "Loaded -msse4.1")
+    target_compile_options(sse4_1 INTERFACE -msse4.1)
+endif()
+
 target_link_libraries(${CMAKE_PROJECT_NAME} SDL2main SDL2-static)
