@@ -1,6 +1,6 @@
 #include "Renderer.h"
 
-#include "TaskListExecutor.h"
+#include <future>
 
 Image Renderer::render(const Camera &cam, const HittableScene &scene)
 {
@@ -10,18 +10,17 @@ Image Renderer::render(const Camera &cam, const HittableScene &scene)
 	if (m_num_thds > 1)
 	{
 		// Assemble Tasks
-		std::vector<Task> tasks(im.height());
+		std::vector<std::future<void>> tasks;
 		for (size_t j = 0; j < im.height(); ++j)
 		{
 
-			tasks[j] = [this, &im, cam, j, &scene]()
+			auto task = [this, &im, cam, j, &scene]()
 			{
 				render_row(im, j, cam, scene);
 			};
+			tasks.emplace_back(std::async(std::launch::async,task));
 		}
-
-		// Execute Tasks
-		TaskListExecutor::execute_tasks(tasks, m_num_thds);
+		// Tasks complete upon destruction of the vector
 	}
 	else
 	{
