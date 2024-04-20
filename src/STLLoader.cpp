@@ -178,10 +178,24 @@ std::pair<std::string, std::vector<STL_Triangle>> STLLoader::load_ascii_stl(cons
     return std::make_pair(name, stl);
 }
 
+#pragma pack(push, 1)
+typedef struct BinarySTLTriangle
+{
+    float normal_vec[3];
+    float v1[3];
+    float v2[3];
+    float v3[3];
+    uint16_t attribute;
+} BinarySTLTriangle;
+#pragma pack(pop) // disables the effect of #pragma pack from now on
+
+auto a = sizeof(BinarySTLTriangle);
+static_assert(sizeof(BinarySTLTriangle) == 50);
+
 std::pair<std::string, std::vector<STL_Triangle>> STLLoader::load_binary_stl(const char *file_path)
 {
     std::ifstream file(file_path, std::ios::binary | std::ios::in);
-    char header[80];
+    char header[80] = {0};
     if (file.readsome(header, sizeof(header)) != sizeof(header))
     {
         throw std::runtime_error("Malformed Binary STL, could not read header");
@@ -195,46 +209,18 @@ std::pair<std::string, std::vector<STL_Triangle>> STLLoader::load_binary_stl(con
     std::vector<STL_Triangle> stl(num_triangles);
     for (uint32_t i = 0; i < num_triangles; i++)
     {
-        // Read in normal
-        float normal_vec[3];
-        if (file.readsome(reinterpret_cast<char *>(&normal_vec), sizeof(normal_vec)) != sizeof(normal_vec))
+        // Read in triangle
+        BinarySTLTriangle triangle;
+        file.read(reinterpret_cast<char *>(&triangle), sizeof(triangle));
+        if (file.eof() && file.fail())
         {
-            throw std::runtime_error("Malformed Binary STL, could not read normal vector");
+            throw std::runtime_error("Malformed Binary STL, could not read triangle");
         }
 
-        // Read in v1
-        float v1[3];
-        if (file.readsome(reinterpret_cast<char *>(&v1), sizeof(v1)) != sizeof(v1))
-        {
-            throw std::runtime_error("Malformed Binary STL, could not read v1");
-        }
-
-        // Read in v2
-        float v2[3];
-        if (file.readsome(reinterpret_cast<char *>(&v2), sizeof(v2)) != sizeof(v2))
-        {
-            throw std::runtime_error("Malformed Binary STL, could not read v2");
-        }
-
-        // Read in v3
-        float v3[3];
-        if (file.readsome(reinterpret_cast<char *>(&v3), sizeof(v3)) != sizeof(v3))
-        {
-            throw std::runtime_error("Malformed Binary STL, could not read v3");
-        }
-
-        // Read in attribute tag
-        uint16_t attribute;
-        if (file.readsome(reinterpret_cast<char *>(&attribute), sizeof(attribute)) != sizeof(attribute))
-        {
-            throw std::runtime_error("Malformed Binary STL, could not read attribute");
-        }
-
-        Vec3D v1_a(v1[0], v1[1], v1[2]);
-        Vec3D v2_a(v2[0], v2[1], v2[2]);
-        Vec3D v3_a(v3[0], v3[1], v3[2]);
-
-        STL_Triangle tri{v1_a, v2_a, v3_a};
+        STL_Triangle tri{
+            Vec3D{triangle.v1[0], triangle.v1[1], triangle.v1[2]},
+            Vec3D{triangle.v2[0], triangle.v2[1], triangle.v2[2]},
+            Vec3D{triangle.v3[0], triangle.v3[1], triangle.v3[2]}};
 
         stl[i] = tri;
     }

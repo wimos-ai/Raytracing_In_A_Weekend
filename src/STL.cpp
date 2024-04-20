@@ -24,10 +24,10 @@ STL::STL(const char *file_name, Material *mat_) : bounding_sphere(Vec3D(0, 0, 0)
 
 bool STL::hit(const Ray &ray, const Interval &ray_interval, HitRecord &rec) const {
     HitRecord tmp;
-    if (!bounding_sphere.hit(ray, ray_interval, tmp))
-    {
-        return false;
-    }
+    // if (!bounding_sphere.hit(ray, ray_interval, tmp))
+    // {
+    //     return false;
+    // }
 
     for (const auto& tri : triangles)
     {
