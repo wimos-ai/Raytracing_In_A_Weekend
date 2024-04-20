@@ -22,7 +22,6 @@ set(IMGUI_SRC_FILES
 add_executable(
     ${CMAKE_PROJECT_NAME}
     "./src/Interval.cpp"
-    "./src/TaskListExecutor.cpp"
     "./src/Utills.cpp"
     "./src/HittableScene.cpp"
     "./src/RGB_Pixel.cpp"
