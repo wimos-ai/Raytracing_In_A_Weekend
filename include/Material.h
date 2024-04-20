@@ -9,7 +9,8 @@ class Material : public Ownable
 {
 public:
 
-	virtual bool scatter(const Ray& r_in, const HitRecord& rec, Color3D& attenuation, Ray& scattered) const = 0;
+	virtual bool scatter(const Ray& r_in, const HitRecord& rec, Color3D& attenuation, Ray& scattered) const;
+    virtual Vec3D emission() const;
 };
 
 class Lambertian : public Material {
@@ -26,7 +27,7 @@ class Metal : public Material {
 public:
     inline explicit Metal(const Color3D& a) : m_albedo(a) {}
 
-    bool scatter(const Ray& r_in, const HitRecord& rec, Color3D& attenuation, Ray& scattered) const override;
+    virtual bool scatter(const Ray& r_in, const HitRecord& rec, Color3D& attenuation, Ray& scattered) const override;
 
 private:
     Color3D m_albedo;
@@ -52,4 +53,15 @@ public:
 private:
     static double Schlicks_approx_refl(double cos_val, double refl_idx);
     double m_index_of_refraction;
+};
+
+class Emissive : public Material {
+public:
+    inline explicit Emissive(Color3D color_, float intensity_) : color(color_), intensity(intensity_){};
+
+    virtual Vec3D emission() const override;
+
+private:
+    Color3D color;
+    float intensity;
 };

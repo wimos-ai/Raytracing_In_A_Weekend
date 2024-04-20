@@ -20,7 +20,9 @@ namespace
     void safe_read(char *buff, size_t len, std::ifstream &istream)
     {
         istream >> std::ws;
-        if (istream.readsome(buff, len) < len)
+        istream.read(buff, len);
+
+        if ( istream.fail())
         {
             throw std::runtime_error("Failed to read buffer");
         }

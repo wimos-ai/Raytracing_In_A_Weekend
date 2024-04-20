@@ -4,6 +4,10 @@
 using Vec3D = Eigen::Vector3d;
 using Color3D = Vec3D;
 
+inline Color3D linear_to_gamma(Color3D&color){
+    return color.cwiseSqrt();
+}
+
 inline Vec3D randomVec3D()
 {
     return Vec3D(RandUtils::rand(), RandUtils::rand(), RandUtils::rand());
