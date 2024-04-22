@@ -3,8 +3,8 @@
 #include <cstdint>
 
 #include "STLLoader.hpp"
-#include "Shapes.h"
-#include "Material.h"
+#include "Shapes.hpp"
+#include "Material.hpp"
 
 constexpr const size_t ONE_KB = 1024;
 

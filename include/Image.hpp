@@ -1,5 +1,5 @@
 #pragma once
-#include "RGB_Pixel.h"
+#include "RGB_Pixel.hpp"
 #include "BlockArray.hpp"
 
 

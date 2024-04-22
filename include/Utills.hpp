@@ -1,5 +1,5 @@
 #pragma once
-#include "Interval.h"
+#include "Interval.hpp"
 
 namespace RandUtils {
 	double rand();

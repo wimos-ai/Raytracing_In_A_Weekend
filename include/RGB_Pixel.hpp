@@ -1,7 +1,7 @@
 #pragma once
 #include <cstdint>
 #include <cstddef>
-#include "Vec3D.h"
+#include "Vec3D.hpp"
 
 using std::size_t;
 

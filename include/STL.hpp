@@ -1,4 +1,4 @@
-#include "Shapes.h"
+#include "Shapes.hpp"
 #include <vector>
 
 class STL : public Shape

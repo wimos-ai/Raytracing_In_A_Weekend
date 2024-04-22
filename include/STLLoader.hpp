@@ -2,7 +2,7 @@
 #include <vector>
 #include <utility>
 #include <string>
-#include "Vec3D.h"
+#include "Vec3D.hpp"
 
 typedef struct STL_Triangle{
     Vec3D v1;

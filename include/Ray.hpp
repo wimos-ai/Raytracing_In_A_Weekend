@@ -1,5 +1,5 @@
 #pragma once
-#include "Vec3D.h"
+#include "Vec3D.hpp"
 class Ray
 {
 public:

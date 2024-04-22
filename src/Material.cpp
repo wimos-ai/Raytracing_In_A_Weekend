@@ -1,5 +1,5 @@
-#include "Material.h"
-#include "Shapes.h"
+#include "Material.hpp"
+#include "Shapes.hpp"
 
 bool Material::scatter(const Ray &r_in, const HitRecord &rec, Color3D &attenuation, Ray &scattered) const
 {

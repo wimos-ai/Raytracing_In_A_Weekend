@@ -1,4 +1,4 @@
-#include "Shapes.h"
+#include "Shapes.hpp"
 #include <cassert>
 
 void HitRecord::set_face_normal(const Ray& ray, const Vec3D& vec) {

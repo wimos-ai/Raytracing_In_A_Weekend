@@ -1,9 +1,9 @@
 #pragma once
-#include "Vec3D.h"
-#include "Ray.h"
-#include "RGB_Pixel.h"
-#include "Interval.h"
-#include "Material.h"
+#include "Vec3D.hpp"
+#include "Ray.hpp"
+#include "RGB_Pixel.hpp"
+#include "Interval.hpp"
+#include "Material.hpp"
 #include "Ownable.hpp"
 
 typedef struct HitRecord

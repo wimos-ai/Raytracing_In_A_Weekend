@@ -1,7 +1,7 @@
-#include "Camera.h"
+#include "Camera.hpp"
 #include <cassert>
 #include <limits>
-#include "Utills.h"
+#include "Utills.hpp"
 #include <cstdio>
 
 //Vec3D m_focal_point;		//Focal Point

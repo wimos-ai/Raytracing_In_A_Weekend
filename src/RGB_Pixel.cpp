@@ -1,6 +1,6 @@
-#include "RGB_Pixel.h"
+#include "RGB_Pixel.hpp"
 #include <limits>
-#include "Vec3D.h"
+#include "Vec3D.hpp"
 
 RGB_Pixel::RGB_Pixel(const Vec3D &other) : r(static_cast<uint8_t>(255 * (other.x()))),
 										   g(static_cast<uint8_t>(255 * (other.y()))),

@@ -1,7 +1,7 @@
 #pragma once
 #include "Ownable.hpp"
-#include "Ray.h"
-#include "Vec3D.h"
+#include "Ray.hpp"
+#include "Vec3D.hpp"
 
 
 struct HitRecord;

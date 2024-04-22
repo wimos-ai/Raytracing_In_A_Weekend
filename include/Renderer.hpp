@@ -1,8 +1,8 @@
 #pragma once
 
 
-#include "Camera.h"
-#include "HittableScene.h"
+#include "Camera.hpp"
+#include "HittableScene.hpp"
 
 class Renderer
 {

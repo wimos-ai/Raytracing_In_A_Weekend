@@ -1,4 +1,4 @@
-#include "STL.h"
+#include "STL.hpp"
 #include "STLLoader.hpp"
 
 STL::STL(const char *file_name, Material *mat_) : bounding_sphere(Vec3D(0, 0, 0), 0, nullptr), mat(mat_)

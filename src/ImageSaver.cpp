@@ -1,4 +1,4 @@
-#include "ImageSaver.h"
+#include "ImageSaver.hpp"
 
 #if defined(__STDC_LIB_EXT1__) | defined(_MSC_VER)
 	#define  __STDC_WANT_LIB_EXT1__ 1

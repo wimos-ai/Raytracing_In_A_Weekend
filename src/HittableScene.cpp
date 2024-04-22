@@ -1,11 +1,11 @@
-#include "HittableScene.h"
+#include "HittableScene.hpp"
 
 bool HittableScene::hit(const Ray& ray, const Interval& ray_interval, HitRecord& rec) const
 {
 	double closest_so_far = ray_interval.max();
 	bool hit_something = false;
 
-	for (const std::unique_ptr<Shape>& item : *this)
+	for (const std::unique_ptr<Shape>& item : m_shapes)
 	{
 		HitRecord tmp_rec;
 		if (item->hit(ray, ray_interval, tmp_rec)) {
@@ -18,11 +18,6 @@ bool HittableScene::hit(const Ray& ray, const Interval& ray_interval, HitRecord&
 		}
 	}
 	return hit_something;
-}
-
-void HittableScene::take_ownership(std::unique_ptr<Ownable>&& obj)
-{
-	m_owned_objs.emplace_back(std::move(obj));
 }
 
 HittableScene::~HittableScene(){}

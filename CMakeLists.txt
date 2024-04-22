@@ -7,6 +7,7 @@ set(SDL_SHARED OFF CACHE BOOL "" FORCE)
 
 add_subdirectory(lib/SDL2)
 
+
 # Dear IMGui
 set(IMGUI_SRC_FILES
     lib/imgui/imgui_demo.cpp
@@ -34,6 +35,7 @@ add_executable(
     "./src/Material.cpp"
     "./src/STLLoader.cpp"
     "./src/STL.cpp"
+    "./src/Scenes.cpp"
     ${IMGUI_SRC_FILES}
 )
 

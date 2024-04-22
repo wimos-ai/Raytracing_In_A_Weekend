@@ -1,11 +1,11 @@
 #pragma once
 #include <utility> //std::pair
 
-#include "Vec3D.h"
-#include "Ray.h"
-#include "Image.h"
-#include "Shapes.h"
-#include "HittableScene.h"
+#include "Vec3D.hpp"
+#include "Ray.hpp"
+#include "Image.hpp"
+#include "Shapes.hpp"
+#include "HittableScene.hpp"
 
 
 //See https://raytracing.github.io/books/RayTracingInOneWeekend.html#rays,asimplecamera,andbackground/sendingraysintothescene
