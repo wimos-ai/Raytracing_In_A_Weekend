@@ -158,22 +158,62 @@ HittableScene binary_stl_test()
 HittableScene emissionTest()
 {
 	using std::make_unique;
+
 	HittableScene world;
 
-	auto material1 = make_unique<FuzzyMetal>(Vec3D(1, 0, 0), 0.1);
+	{
+		auto ground_material = make_unique<Lambertian>(Color3D(0.5, 0.5, 0.5));
+		auto s2 = make_unique<Sphere>(Vec3D(0, -1000, 0), 1000, ground_material.get());
+
+		world.add_shape(std::move(s2));
+		world.take_ownership(std::move(ground_material));
+	}
+
+	for (int_fast8_t a = -11; a < 11; a++)
+	{
+		for (int_fast8_t b = -11; b < 11; b++)
+		{
+			auto choose_mat = RandUtils::rand();
+			Vec3D center(a + 0.9 * RandUtils::rand(), 0.2, b + 0.9 * RandUtils::rand());
+
+			if ((center - Vec3D(4, 0.2, 0)).norm() > 0.9)
+			{
+				if (choose_mat < 0.8)
+				{
+					// diffuse
+					Vec3D albedo = (randomVec3D().cwiseProduct(randomVec3D()));
+					auto sphere_material = make_unique<Lambertian>(albedo);
+					auto s = make_unique<Sphere>(center, 0.2, sphere_material.get());
+					world.add_shape(std::move(s));
+					world.take_ownership(std::move(sphere_material));
+				}
+				else if (choose_mat < 0.95)
+				{
+					// metal
+					Vec3D albedo = randomVec3D(Interval(0.5, 1));
+					double fuzz = RandUtils::rand(Interval(0, 0.5));
+					auto sphere_material = make_unique<FuzzyMetal>(albedo, fuzz);
+					auto s = make_unique<Sphere>(center, 0.2, sphere_material.get());
+					world.add_shape(std::move(s));
+					world.take_ownership(std::move(sphere_material));
+				}
+				else
+				{
+					// glass
+					auto sphere_material = make_unique<Dielectric>(1.5);
+					auto s = make_unique<Sphere>(center, 0.2, sphere_material.get());
+					world.add_shape(std::move(s));
+					world.take_ownership(std::move(sphere_material));
+				}
+			}
+		}
+	}
+
+	auto material1 = make_unique<Emissive>(Color3D{ 1,1,1 },20);
 	auto s1 = make_unique<Sphere>(Vec3D(0, 1, 0), 1.0, material1.get());
 	world.add_shape(std::move(s1));
 	world.take_ownership(std::move(material1));
 
-	auto material2 = make_unique<Dielectric>(1.5);
-	auto s2 = make_unique<Sphere>(Vec3D(-4, 1, 0), 1.0, material2.get());
-	world.add_shape(std::move(s2));
-	world.take_ownership(std::move(material2));
-
-	auto material3 = make_unique<Emissive>(Color3D(1, 1, 1), 20);
-	auto s3 = make_unique<Sphere>(Vec3D(4, 1, 0), 1.0, material3.get());
-	world.add_shape(std::move(s3));
-	world.take_ownership(std::move(material3));
 
 	return world;
 }

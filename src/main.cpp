@@ -3,6 +3,7 @@
 
 #include <chrono>
 #include <iostream>
+#include <thread>
 
 #include "Scenes.hpp"
 #include "Image.hpp"
@@ -17,15 +18,23 @@
 #include "Material.hpp"
 #include "Utills.hpp"
 
+#include <chrono>
+
 int main()
 {
-    HittableScene world{final_render()};
+    HittableScene world{ emissionTest()};
     auto sz = Camera::width_height_from_aspect_ratio(600, 16.0 / 9.0);
 
     Camera cam(Vec3D(13, 2, 3), Vec3D(-13, -2, -3), Vec3D(0, -1, 0), 10, sz.first, sz.second);
 
-    Renderer renderer(1, 20, 20);
-    auto im = renderer.render(cam, world);
+    CMRenderer renderer(19, cam, world);
 
-    BMPImageSaver::save(im, "emissionTest.bmp");
+    std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+    BMPImageSaver::save(renderer.get_image(), "a.bmp");
+
+    std::this_thread::sleep_for(std::chrono::milliseconds(10000));
+    BMPImageSaver::save(renderer.get_image(), "b.bmp");
+
+    std::this_thread::sleep_for(std::chrono::milliseconds(100000));
+    BMPImageSaver::save(renderer.get_image(), "c.bmp");
 }

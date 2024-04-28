@@ -18,5 +18,5 @@ typedef struct RGB_Pixel{
 	explicit RGB_Pixel(const Vec3D& other);
 
 	static RGB_Pixel from_normal_vec(const Vec3D& other);
-	static RGB_Pixel normalize_average(const Vec3D& other, size_t num_samples);
+	static RGB_Pixel normalize_average(const Color3D& other, size_t num_samples);
 }RGB_Pixel;
