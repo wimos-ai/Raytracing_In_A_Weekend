@@ -30,7 +30,7 @@ private:
 	std::mutex m_tasks_mutex;
 	std::queue<Task> m_tasks;
 	std::vector<std::thread> m_worker_thds;
-	std::counting_semaphore<std::numeric_limits<std::ptrdiff_t>::max()> m_task_sem;
+	std::counting_semaphore<std::numeric_limits<int>::max()> m_task_sem;
 	std::atomic_bool m_running;
 	std::atomic_bool m_accepting;
 };

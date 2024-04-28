@@ -151,18 +151,18 @@ CMRenderer::~CMRenderer()
 
 	for (auto& it : thds)
 	{
-		it->join();
+		it->m_thread.join();
 	}
 }
 
 
 CMRenderer::WorkerThread::WorkerThread(const Camera& cam, const HittableScene& scene) :
-	std::thread([this]() {this->main(); }),
-	image(cam.width(), cam.height()),
+		image(cam.width(), cam.height()),
 	iters_per_pixel(0),
 	dead(false),
 	cam(cam),
-	scene(scene)
+	scene(scene),
+	m_thread([this]() {this->main(); })
 {
 }
 

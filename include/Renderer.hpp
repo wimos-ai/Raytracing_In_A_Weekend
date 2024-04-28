@@ -61,7 +61,7 @@ public:
 	Image get_image() noexcept;
 
 private:
-	class WorkerThread : public std::thread {
+	class WorkerThread{
 	public:
 		WorkerThread(const Camera& cam, const HittableScene& scene);
 
@@ -72,6 +72,8 @@ private:
 		std::atomic_bool dead;
 		const Camera& cam;
 		const HittableScene& scene;
+
+		std::thread m_thread;
 
 		friend class CMRenderer;
 	};
