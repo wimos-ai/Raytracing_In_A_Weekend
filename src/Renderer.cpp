@@ -1,6 +1,7 @@
 #include <utility>
 
 #include "Renderer.hpp"
+#include "ThreadPool.hpp"
 
 // ------------- RendererCommon -------------
 Color3D RendererCommon::sky_color(const Ray& sky_ray)
