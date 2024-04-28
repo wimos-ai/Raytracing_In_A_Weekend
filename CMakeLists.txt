@@ -1,11 +1,16 @@
 cmake_minimum_required(VERSION 3.18.0)
 project(RaytracingInAWeekend)
 
+set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
 # SDL2
 set(SDL_STATIC ON CACHE BOOL "" FORCE)
 set(SDL_SHARED OFF CACHE BOOL "" FORCE)
 
 add_subdirectory(lib/SDL2)
+
+
 
 
 # Dear IMGui
@@ -37,7 +42,7 @@ add_executable(
     "./src/STL.cpp"
     "./src/Scenes.cpp"
     ${IMGUI_SRC_FILES}
-)
+    "src/ThreadPool.cpp" "src/ThreadPool.cpp")
 
 # Add IMGui Src Files
 target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE lib/imgui)
