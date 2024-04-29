@@ -95,93 +95,55 @@ Image MTRenderer::render() {
 // ------------- CMRenderer -------------
 
 CMRenderer::CMRenderer(size_t num_thds, const Camera& cam, const HittableScene& scene) :
-	thds(),
-	cam(cam)
+	cam(cam),
+	scene(scene),
+	num_thds(num_thds),
+	float_image(cam.width(), cam.height()),
+	workerPool(num_thds)
 {
-	for (size_t i = 0; i < num_thds; i++)
+	this->add_row_tasks();
+	return;
+}
+
+CMRenderer::~CMRenderer()
+{
+	workerPool.clear_tasks();
+}
+
+void CMRenderer::add_row_tasks()
+{
+	for (size_t j = 0; j < cam.height(); ++j) {
+
+		workerPool.submit_task([this, j]() {
+			this->update_row(j);
+			}
+		);
+	}
+	workerPool.submit_task([this]() {
+		this->add_row_tasks();
+		}
+	);
+}
+
+void CMRenderer::update_row(size_t row)
+{
+	for (size_t i = 0; i < cam.width(); i++)
 	{
-		thds.emplace_back(std::make_unique<WorkerThread>(cam, scene));
+		Ray curr_ray = cam.ray_at_pixel(i, row);
+		float_image[i][row].first += RendererCommon::get_ray_color(curr_ray, this->scene, this->DEFAULT_DEPTH);
+		float_image[i][row].second += 1;
 	}
 }
 
 Image CMRenderer::get_image() noexcept
 {
-	BlockArray2D<Color3D> float_image(cam.width(), cam.height());
-	//this->pause();
+	Image im(cam.width(), cam.height());
+	for (size_t j = 0; j < cam.height(); ++j) {
 
-	// Determine the total number of iterations per pixel
-	size_t iters = 0;
-	for (auto& it : thds)
-	{
-		iters += it->iters_per_pixel;
-	}
-
-	Color3D* cumulative_image_start = &float_image[0][0];
-
-	// Sum worker thread images together weighted by number of iterations per pixel per thread
-	for (auto& it : thds)
-	{
-		double percentage = static_cast<double>(it->iters_per_pixel) / static_cast<double>(iters);
-		Color3D* it_im_start = &it->image[0][0];
-		for (size_t i = 0; i < cam.width() * cam.height(); i++)
+		for (size_t i = 0; i < cam.width(); i++)
 		{
-			cumulative_image_start[i] += it_im_start[i] * percentage;
+			im.at(i, j) = RGB_Pixel::normalize_average(float_image[i][j].first, float_image[i][j].second);
 		}
 	}
-
-	//this->resume();
-
-	Image im_out(cam.width(), cam.height());
-	RGB_Pixel* rgb_start = &im_out.at(0, 0);
-	for (size_t i = 0; i < cam.width() * cam.height(); i++)
-	{
-		Color3D gamma_color = linear_to_gamma(cumulative_image_start[i]);
-		Color3D thresholded = gamma_color.cwiseMin(Color3D{ 1,1,1 });
-		rgb_start[i] = RGB_Pixel(thresholded);
-	}
-	return im_out;
-}
-
-CMRenderer::~CMRenderer()
-{
-	for (auto& it : thds)
-	{
-		it->dead = true;
-	}
-
-	for (auto& it : thds)
-	{
-		it->m_thread.join();
-	}
-}
-
-
-CMRenderer::WorkerThread::WorkerThread(const Camera& cam, const HittableScene& scene) :
-		image(cam.width(), cam.height()),
-	iters_per_pixel(0),
-	dead(false),
-	cam(cam),
-	scene(scene),
-	m_thread([this]() {this->main(); })
-{
-}
-
-void CMRenderer::WorkerThread::main() noexcept {
-	while (true)
-	{
-		if (dead)
-		{
-			return;
-		}
-		for (size_t j = 0; j < image.size(); ++j)
-		{
-			for (size_t i = 0; i < image[j].size(); i++)
-			{
-				Ray curr_ray = cam.ray_at_pixel(j, i);
-				image[j][i] += RendererCommon::get_ray_color(curr_ray, scene, DEFAULT_DEPTH);
-			}
-		}
-		iters_per_pixel++;
-		
-	}
+	return im;
 }

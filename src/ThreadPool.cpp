@@ -40,7 +40,7 @@ void ThreadPool::thread_main()
 
 		//Claim the top task
 		Task t = m_tasks.front();
-		m_tasks.pop();
+		m_tasks.pop_front();
 
 		//Allow other threads to claim tasks
 		m_tasks_mutex.unlock();
@@ -75,15 +75,22 @@ ThreadPool::~ThreadPool() {
 	}
 }
 
-bool ThreadPool::submit_task(Task t)
+void ThreadPool::submit_task(Task t)
 {
-	if (m_accepting)
+	std::lock_guard<std::mutex> lck(m_tasks_mutex);
+	m_tasks.push_back(t);
+	m_task_sem.release();
+}
+
+void ThreadPool::clear_tasks()
+{
+	
+	std::lock_guard<std::mutex> lck(m_tasks_mutex);
+	// Swap for empty tasks so we do not need to mess with the semaphore
+	for (auto& task: m_tasks)
 	{
-		std::lock_guard<std::mutex> lck(m_tasks_mutex);
-		m_tasks.push(t);
-		m_task_sem.release();
-		return true;
+		Task emptyTask = []() {};
+		std::swap(task, emptyTask);
 	}
 
-	return false;
 }

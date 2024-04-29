@@ -4,6 +4,7 @@
 #include "Camera.hpp"
 #include "HittableScene.hpp"
 #include "BlockArray.hpp"
+#include "ThreadPool.hpp"
 
 #include <thread>
 #include <memory>
@@ -61,27 +62,15 @@ public:
 	Image get_image() noexcept;
 
 private:
-	class WorkerThread{
-	public:
-		WorkerThread(const Camera& cam, const HittableScene& scene);
-
-		void main() noexcept;
-
-		BlockArray2D<Color3D> image;
-	    std::atomic<size_t> iters_per_pixel  = 0;
-		std::atomic_bool dead;
-		const Camera& cam;
-		const HittableScene& scene;
-
-		std::thread m_thread;
-
-		friend class CMRenderer;
-	};
-
+	void add_row_tasks();
+	void update_row(size_t row);
 private:
-	std::vector<std::unique_ptr<WorkerThread>> thds;
 	const Camera& cam;
+	const HittableScene& scene;
+	size_t num_thds;
+	BlockArray2D<std::pair<Color3D, size_t>> float_image;
+	ThreadPool workerPool;
 
-	constexpr static size_t DEFAULT_DEPTH = 500;
+	constexpr static size_t DEFAULT_DEPTH = 1000;
 
 };

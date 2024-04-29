@@ -2,7 +2,7 @@
 
 
 #include <functional>
-#include <queue>
+#include <deque>
 #include <atomic>
 #include <vector>
 #include <thread>
@@ -22,13 +22,14 @@ class ThreadPool
 public:
 	ThreadPool(size_t num_thds = std::thread::hardware_concurrency());
 	~ThreadPool();
-	bool submit_task(Task t); //True on success, false on failure
+	void submit_task(Task t); //True on success, false on failure
+	void clear_tasks();
 private:
 	void close_pool();
 	void thread_main();
 private:
 	std::mutex m_tasks_mutex;
-	std::queue<Task> m_tasks;
+	std::deque<Task> m_tasks;
 	std::vector<std::thread> m_worker_thds;
 	std::counting_semaphore<std::numeric_limits<int>::max()> m_task_sem;
 	std::atomic_bool m_running;
