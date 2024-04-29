@@ -173,7 +173,6 @@ void CMRenderer::WorkerThread::main() noexcept {
 		{
 			return;
 		}
-
 		for (size_t j = 0; j < image.size(); ++j)
 		{
 			for (size_t i = 0; i < image[j].size(); i++)
@@ -183,5 +182,6 @@ void CMRenderer::WorkerThread::main() noexcept {
 			}
 		}
 		iters_per_pixel++;
+		
 	}
 }

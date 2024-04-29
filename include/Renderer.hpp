@@ -68,7 +68,7 @@ private:
 		void main() noexcept;
 
 		BlockArray2D<Color3D> image;
-	    size_t iters_per_pixel  = 0;
+	    std::atomic<size_t> iters_per_pixel  = 0;
 		std::atomic_bool dead;
 		const Camera& cam;
 		const HittableScene& scene;

@@ -18,6 +18,8 @@
 #include "Material.hpp"
 #include "Utills.hpp"
 
+#include <iostream>
+
 #include <chrono>
 
 int main()
@@ -27,14 +29,17 @@ int main()
 
     Camera cam(Vec3D(13, 2, 3), Vec3D(-13, -2, -3), Vec3D(0, -1, 0), 10, sz.first, sz.second);
 
-    CMRenderer renderer(19, cam, world);
+    CMRenderer renderer(1, cam, world);
 
     std::this_thread::sleep_for(std::chrono::milliseconds(1000));
     BMPImageSaver::save(renderer.get_image(), "a.bmp");
+    std::cout << "a" << std::endl;
 
     std::this_thread::sleep_for(std::chrono::milliseconds(10000));
     BMPImageSaver::save(renderer.get_image(), "b.bmp");
+    std::cout << "b" << std::endl;
 
     std::this_thread::sleep_for(std::chrono::milliseconds(100000));
     BMPImageSaver::save(renderer.get_image(), "c.bmp");
+    std::cout << "c" << std::endl;
 }
