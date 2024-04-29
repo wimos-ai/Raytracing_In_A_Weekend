@@ -14,7 +14,7 @@ class Camera
 public:
 
 
-	Camera(const Vec3D& pos, const Vec3D& direction, const Vec3D& image_up, double focal_len, size_t pix_width, size_t pix_height);
+	Camera(const Vec3D& pos, const Vec3D& cam_dir, const Vec3D& image_up, double focal_len, size_t pix_width, size_t pix_height);
 	Camera() = delete;
 
 	static std::pair<size_t, size_t> width_height_from_aspect_ratio(size_t width, double aspect_ratio);

@@ -19,5 +19,3 @@ bool HittableScene::hit(const Ray& ray, const Interval& ray_interval, HitRecord&
 	}
 	return hit_something;
 }
-
-HittableScene::~HittableScene(){}

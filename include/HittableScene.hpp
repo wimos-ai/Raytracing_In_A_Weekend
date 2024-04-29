@@ -18,7 +18,7 @@ public:
 
 	HittableScene(HittableScene&& other) = default;
 
-	~HittableScene() override;
+	~HittableScene() override = default;
 private:
 	std::vector<std::unique_ptr<Ownable>> m_owned_objs;
 	std::vector<std::unique_ptr<Shape>> m_shapes;

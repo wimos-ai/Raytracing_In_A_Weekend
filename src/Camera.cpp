@@ -36,21 +36,21 @@ Ray Camera::ray_at_pixel(size_t width, size_t height) const
 	Vec3D pix_location = m_viewport_corner + width_vec + height_vec;
 	Vec3D fp_to_pixel = pix_location - m_focal_point;
 	Vec3D random_deviation = pixel_sample_square();
-	return Ray(m_focal_point, fp_to_pixel + random_deviation);
+	return { m_focal_point, fp_to_pixel + random_deviation };
 }
 
 
 Vec3D Camera::pixel_sample_square() const
 {
 	// Returns a random point in the square surrounding a pixel at the origin.
-	auto px = -0.5 + RandUtils::rand();
-	auto py = -0.5 + RandUtils::rand();
-	return (px * m_delta_width) + (py * m_delta_height);
+	auto jitter_x = -0.5 + RandUtils::rand();
+	auto jitter_y = -0.5 + RandUtils::rand();
+	return (jitter_x * m_delta_width) + (jitter_y * m_delta_height);
 }
 
 std::pair<size_t, size_t> Camera::width_height_from_aspect_ratio(size_t width, double aspect_ratio) {
 
-	size_t image_height = static_cast<size_t>((double)width / aspect_ratio);
+	auto image_height = static_cast<size_t>((double)width / aspect_ratio);
 	image_height = (image_height < 1) ? 1 : image_height;
 	return{ width, image_height };
 
