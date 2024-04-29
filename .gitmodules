@@ -8,4 +8,8 @@
 [submodule "lib/SDL2"]
 	path = lib/SDL2
 	url = https://github.com/libsdl-org/SDL.git
-	branch = SDL2
+	branch = release-2.30.2
+[submodule "lib/SDL2_Image"]
+	path = lib/SDL2_Image
+	url = https://github.com/libsdl-org/SDL_image.git
+	branch = release-2.8.2
