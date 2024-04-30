@@ -75,6 +75,14 @@ public:
 		return m_dim_1;
 	}
 
+	std::span<T> data() {
+		return { m_arr.data(), m_arr.size() };
+	}
+
+	std::span<const T> data() const{
+		return { m_arr.data(), m_arr.size() };
+	}
+
 	~BlockArray2D() = default;
 private:
 	std::vector<T> m_arr;

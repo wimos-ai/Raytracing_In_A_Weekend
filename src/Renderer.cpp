@@ -34,8 +34,8 @@ Vec3D RendererCommon::get_ray_color(const Ray& ray, const HittableScene& scene, 
 	// Us from drawing stuff that is behind the camera
 	if (!scene.hit(ray, Interval(0.001, Interval::INF), rec))
 	{
-		return { 0,0,0 };
-		//return sky_color(ray);
+		//return { 0,0,0 };
+		return sky_color(ray);
 	}
 
 	Ray scattered;
@@ -138,12 +138,14 @@ void CMRenderer::update_row(size_t row)
 Image CMRenderer::get_image() noexcept
 {
 	Image im(cam.width(), cam.height());
-	for (size_t j = 0; j < cam.height(); ++j) {
 
-		for (size_t i = 0; i < cam.width(); i++)
-		{
-			im.at(i, j) = RGB_Pixel::normalize_average(float_image[i][j].first, float_image[i][j].second);
-		}
+	auto pixels = im.data();
+	auto hsv_colors = this->float_image.data();
+
+	for (size_t i = 0; i < im.data().size(); i++)
+	{
+		pixels[i] = RGB_Pixel::normalize_average(hsv_colors[i].first, hsv_colors[i].second);
 	}
+
 	return im;
 }

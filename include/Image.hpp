@@ -21,6 +21,14 @@ public:
 
 	const RGB_Pixel& at(size_t m_x, size_t m_y) const;
 
+	std::span<RGB_Pixel> data() {
+		return m_pixels.data();
+	}
+
+	std::span<const RGB_Pixel> data() const {
+		return m_pixels.data();
+	}
+
 private:
 	BlockArray2D<RGB_Pixel> m_pixels;
 };
