@@ -12,7 +12,7 @@ set(SDL_STATIC_PIC ON CACHE BOOL "" FORCE)
 add_subdirectory(lib/SDL2)
 
 # # SDL2_Image
-add_compile_definitions(LOAD_BMP, SDL_IMAGE_USE_COMMON_BACKEND)
+add_definitions(-DLOAD_BMP=1 -DSDL_IMAGE_USE_COMMON_BACKEND=1)
 set(SDL2_IMAGE_SRC_FILES
     lib/SDL2_Image/src/IMG.c
     lib/SDL2_Image/src/IMG_WIC.c
@@ -68,7 +68,8 @@ add_executable(
     "./src/STLLoader.cpp"
     "./src/STL.cpp"
     "./src/Scenes.cpp"
-    "src/ThreadPool.cpp" "src/ThreadPool.cpp")
+    "src/ThreadPool.cpp" 
+    "src/ThreadPool.cpp")
 
 # Add IMGui Src Files
 target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE lib/imgui)
@@ -98,5 +99,4 @@ else()
     target_compile_options(sse4_1 INTERFACE -msse4.1)
 endif()
 
-# target_link_libraries(${CMAKE_PROJECT_NAME} SDL2main SDL2-static)
-target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE SDL2::SDL2)
+target_link_libraries(${CMAKE_PROJECT_NAME} SDL2main SDL2-static)

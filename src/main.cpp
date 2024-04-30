@@ -179,6 +179,8 @@ int main(int, char **)
             std::exit(-1);
         }
 
+        SDL_DestroyTexture(loaded_tex);
+
         // End Render Raytraced Image
 
         // ImGui_ImplSDLRenderer2_RenderDrawData(ImGui::GetDrawData());
