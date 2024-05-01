@@ -61,6 +61,8 @@ public:
 	// Gets currently rendered image
 	Image get_image() noexcept;
 
+	void get_rgb_buffer(std::vector<char>& buffer) noexcept;
+
 private:
 	void add_row_tasks();
 	void update_row(size_t row);
@@ -68,7 +70,7 @@ private:
 	const Camera& cam;
 	const HittableScene& scene;
 	size_t num_thds;
-	BlockArray2D<std::pair<Color3D, size_t>> float_image;
+	BlockArray2D<std::pair<Color3D, double>> float_image;
 	ThreadPool workerPool;
 
 	constexpr static size_t DEFAULT_DEPTH = 1000;

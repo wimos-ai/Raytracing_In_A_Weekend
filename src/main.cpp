@@ -28,22 +28,26 @@
 
 
 namespace {
-    void RTRender(Image& im, SDL_Renderer* renderer, int WindowWidth, int WindowHeight) {
-        std::vector<char> rendered_image = BMPImageSaver::serialize(im);
+    // The SDL_Surface must die before im
+    SDL_Surface* from_image(std::vector<char>& im, int WindowWidth, int WindowHeight) {
+        return SDL_CreateRGBSurfaceFrom(im.data(),
+            WindowWidth,
+            WindowHeight,
+            3 * 8,          // bits per pixel = 24
+            WindowWidth * 3,  // pitch
+            0x0000FF,              // red mask
+            0x00FF00,              // green mask
+            0xFF0000,              // blue mask
+            0);
+    }
 
-        SDL_RWops* sdl_buff = SDL_RWFromMem(rendered_image.data(), rendered_image.size());
-        if (sdl_buff == NULL)
-        {
-            std::cout << "sdl_buff: " << SDL_GetError();
-            std::exit(-1);
-        }
+    // Maybe look at using a variation of:
+    // https://gamedev.stackexchange.com/questions/135126/in-sdl2-what-is-the-fastest-most-efficient-way-to-draw-pixels-onto-the-screen
+    // To speed this up. I could make a texture at startup, and update it as needed
+    void RTRender(CMRenderer& ray_renderer, std::vector<char>& buffer, SDL_Renderer* renderer, int WindowWidth, int WindowHeight) {
+        ray_renderer.get_rgb_buffer(buffer);
 
-        SDL_Surface* loaded_surface = IMG_LoadBMP_RW(sdl_buff);
-
-        if (!loaded_surface) {
-            std::cout << "IMG_LoadBMP_RW: " << SDL_GetError();
-            std::exit(-1);
-        }
+        SDL_Surface* loaded_surface = from_image(buffer, WindowWidth, WindowHeight);
 
         SDL_Texture* loaded_tex = SDL_CreateTextureFromSurface(renderer, loaded_surface);
 
@@ -53,7 +57,7 @@ namespace {
             std::exit(-1);
         }
 
-        SDL_Rect texture_rect;
+        SDL_Rect texture_rect = {};
         texture_rect.x = 0;            // the x coordinate
         texture_rect.y = 0;            // the y coordinate
         texture_rect.w = WindowWidth;  // the width of the texture
@@ -95,10 +99,10 @@ int main(int, char**)
     HittableScene world{ emissionTest() };
     Camera cam(Vec3D(13, 2, 3), Vec3D(-13, -2, -3), Vec3D(0, -1, 0), 10, WindowWidth, WindowHeight);
     int num_render_threads = std::max(static_cast<int>(std::thread::hardware_concurrency()) - 2, 1);
-    //num_render_threads = 0;
+    num_render_threads = 0;
     CMRenderer ray_renderer(num_render_threads, cam, world);
 
-    SDL_Window* window = SDL_CreateWindow("FTC Ballistics Program Mk. 9", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, WindowWidth, WindowHeight, window_flags);
+    SDL_Window* window = SDL_CreateWindow("Raytracing In A Weekend - William Mosier", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, WindowWidth, WindowHeight, window_flags);
     if (window == nullptr)
     {
         printf("Error: SDL_CreateWindow(): %s\n", SDL_GetError());
@@ -136,6 +140,7 @@ int main(int, char**)
 
     // Main loop
     bool done = false;
+    std::vector<char> tmp_buffer;
     while (!done)
     {
         // Poll and handle events (inputs, window resize, etc.)
@@ -173,21 +178,9 @@ int main(int, char**)
         ImGui_ImplSDL2_NewFrame();
         ImGui::NewFrame();
 
-        static float velocity = 250;
-        static float theta = 55;
-
-        static float effiency = 1;
-        static std::array<float, 2UL> startingPoint = { 0, 0 };
-
         // 2. Show a simple window that we create ourselves. We use a Begin/End pair to create a named window.
         {
-
             ImGui::Begin("Options"); // Create a window called "Hello, world!" and append into it.
-            ImGui::SliderFloat2("Position (X, Y) inches", &startingPoint[0], 0, 144);
-            ImGui::SliderFloat("Velocity", &velocity, 0, 500);
-            ImGui::SliderFloat("Effiency", &effiency, 0, 1);
-            ImGui::SliderFloat("Theta Degrees", &theta, 0.5, 89.5);
-
             ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / io.Framerate, io.Framerate);
             ImGui::End();
         }
@@ -199,8 +192,7 @@ int main(int, char**)
         SDL_RenderClear(renderer);
 
         // Render Raytraced Image
-        Image im = ray_renderer.get_image();
-        RTRender(im, renderer, WindowWidth, WindowHeight);
+        RTRender(ray_renderer, tmp_buffer, renderer, WindowWidth, WindowHeight);
 
         // Save image if space is pressed
         if (save_image_flag) [[unlikely]]
@@ -210,7 +202,7 @@ int main(int, char**)
                 system_clock::now().time_since_epoch()
             );
             std::string file_path = std::to_string(ms.count()) + ".bmp";
-            BMPImageSaver::save(im, file_path.c_str());
+            BMPImageSaver::save(ray_renderer.get_image(), file_path.c_str());
         }
 
         // End Render Raytraced Image

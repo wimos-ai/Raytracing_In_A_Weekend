@@ -131,7 +131,7 @@ void CMRenderer::update_row(size_t row)
 	{
 		Ray curr_ray = cam.ray_at_pixel(i, row);
 		float_image[i][row].first += RendererCommon::get_ray_color(curr_ray, this->scene, this->DEFAULT_DEPTH);
-		float_image[i][row].second += 1;
+		float_image[i][row].second += 1.0;
 	}
 }
 
@@ -148,4 +148,19 @@ Image CMRenderer::get_image() noexcept
 	}
 
 	return im;
+}
+
+void CMRenderer::get_rgb_buffer(std::vector<char>& buffer) noexcept
+{
+	size_t buff_size = sizeof(RGB_Pixel) * cam.width() * cam.height();
+	buffer.resize(buff_size);
+	RGB_Pixel* data = reinterpret_cast<RGB_Pixel*>(buffer.data());
+	size_t buff_idx = 0;
+	for (size_t x = 0; x < cam.width(); x++)
+	{
+		for (size_t y = 0; y < cam.height(); y++)
+		{
+			data[y * cam.width() + x] = RGB_Pixel::normalize_average(float_image[x][y].first, float_image[x][y].second);
+		}
+	}
 }
