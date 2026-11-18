@@ -3,10 +3,6 @@
 
 void ThreadPool::close_pool()
 {
-	if (this->m_worker_thds.size() == 0)
-	{
-		return;
-	}
 	//Refuse new tasks
 	m_accepting = false;
 
