@@ -67,9 +67,7 @@ add_executable(
     "./src/Material.cpp"
     "./src/STLLoader.cpp"
     "./src/STL.cpp"
-    "./src/Scenes.cpp"
-    "src/ThreadPool.cpp" 
-    "src/ThreadPool.cpp")
+    "./src/Scenes.cpp")
 
 # Add IMGui Src Files
 target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE lib/imgui)

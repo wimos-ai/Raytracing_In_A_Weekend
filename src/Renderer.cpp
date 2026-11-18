@@ -1,58 +1,62 @@
 #include <utility>
 
 #include "Renderer.hpp"
-#include "ThreadPool.hpp"
 
 // ------------- RendererCommon -------------
-Color3D RendererCommon::sky_color(const Ray &sky_ray)
-{
-	Vec3D unit_direction = sky_ray.direction().normalized();
-	double a = 0.5 * (unit_direction.y() + 1.0);
-	return (1.0 - a) * Vec3D(1.0, 1.0, 1.0) + a * Vec3D(0.5, 0.7, 1.0);
-}
 
-RGB_Pixel RendererCommon::render_pixel(size_t x, size_t y, size_t samples, size_t depth, const Camera &cam, const HittableScene &scene)
+namespace RendererCommon
 {
-	Color3D color(0, 0, 0);
-	for (size_t i = 0; i < samples; i++)
+	Color3D sky_color(const Ray &sky_ray)
 	{
-		Ray curr_ray = cam.ray_at_pixel(x, y);
-		color = color + get_ray_color(curr_ray, scene, depth);
-	}
-	return RGB_Pixel::normalize_average(color, samples);
-}
-
-Vec3D RendererCommon::get_ray_color(const Ray &ray, const HittableScene &scene, size_t depth)
-{
-	if (depth <= 0)
-	{
-		return Color3D(0, 0, 0);
+		Vec3D unit_direction = sky_ray.direction().normalized();
+		double a = 0.5 * (unit_direction.y() + 1.0);
+		return (1.0 - a) * Vec3D(1.0, 1.0, 1.0) + a * Vec3D(0.5, 0.7, 1.0);
 	}
 
-	HitRecord rec;
-	// Having the interval be in the + direction prevents
-	// Us from drawing stuff that is behind the camera
-	if (!scene.hit(ray, Interval(0.001, Interval::INF), rec))
+	Vec3D get_ray_color(const Ray &ray, const HittableScene &scene, size_t depth)
 	{
-		// return { 0,0,0 };
-		return sky_color(ray);
+		if (depth <= 0)
+		{
+			return Color3D(0, 0, 0);
+		}
+
+		HitRecord rec;
+		// Having the interval be in the + direction prevents
+		// Us from drawing stuff that is behind the camera
+		if (!scene.hit(ray, Interval(0.001, Interval::INF), rec))
+		{
+			// return { 0,0,0 };
+			return sky_color(ray);
+		}
+
+		Ray scattered;
+		Color3D attenuation;
+		Color3D emission = rec.material->emission();
+
+		if (!rec.material->scatter(ray, rec, attenuation, scattered))
+			return emission;
+
+		Color3D scatter_color = attenuation.cwiseProduct(get_ray_color(scattered, scene, depth - 1));
+
+		return scatter_color + emission;
 	}
 
-	Ray scattered;
-	Color3D attenuation;
-	Color3D emission = rec.material->emission();
+	RGB_Pixel render_pixel(size_t x, size_t y, size_t samples, size_t depth, const Camera &cam, const HittableScene &scene)
+	{
+		Color3D color(0, 0, 0);
+		for (size_t i = 0; i < samples; i++)
+		{
+			Ray curr_ray = cam.ray_at_pixel(x, y);
+			color = color + get_ray_color(curr_ray, scene, depth);
+		}
+		return RGB_Pixel::normalize_average(color, samples);
+	}
 
-	if (!rec.material->scatter(ray, rec, attenuation, scattered))
-		return emission;
-
-	Color3D scatter_color = attenuation.cwiseProduct(get_ray_color(scattered, scene, depth - 1));
-
-	return scatter_color + emission;
 }
 
 // ------------- Renderer -------------
 
-Image Renderer::render()
+Image Renderer::get_image()
 {
 
 	Image im(cam.width(), cam.height());

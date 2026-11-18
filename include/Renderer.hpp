@@ -3,19 +3,12 @@
 #include "Camera.hpp"
 #include "HittableScene.hpp"
 #include "BlockArray.hpp"
-#include "ThreadPool.hpp"
 
 #include <thread>
 #include <memory>
 #include <atomic>
 #include <condition_variable>
 
-namespace RendererCommon
-{
-	Color3D sky_color(const Ray &sky_ray);
-	RGB_Pixel render_pixel(size_t x, size_t y, size_t samples, size_t depth, const Camera &cam, const HittableScene &scene);
-	Vec3D get_ray_color(const Ray &ray, const HittableScene &scene, size_t depth);
-}
 
 // Basic Single Threaded Renderer
 class Renderer
@@ -25,7 +18,7 @@ public:
 		: m_samples_per_pixel(samples_per_pixel), m_max_depth(max_depth), cam(cam), scene(scene)
 	{
 	}
-	Image render();
+	Image get_image();
 
 private:
 	size_t m_samples_per_pixel; // Number of ray samples per pixel

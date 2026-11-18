@@ -101,6 +101,7 @@ int main(int, char **)
     Camera cam(Vec3D(13, 2, 3), Vec3D(-13, -2, -3), Vec3D(0, -1, 0), 10, ImWidth, ImHeight);
     int num_render_threads = std::max(static_cast<int>(std::thread::hardware_concurrency()) - 2, 1);
     // num_render_threads = 0;
+    std::srand(0);
     CMARenderer ray_renderer(num_render_threads, cam, world);
 
     SDL_Window *window = SDL_CreateWindow("FTC Ballistics Program Mk. 9", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, WindowWidth, WindowHeight, window_flags);
