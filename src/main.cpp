@@ -26,26 +26,28 @@
 #error This backend requires SDL 2.0.17+ because of SDL_RenderGeometry() function
 #endif
 
-
-namespace {
-    void RTRender(Image& im, SDL_Renderer* renderer, int WindowWidth, int WindowHeight) {
+namespace
+{
+    void RTRender(Image &im, SDL_Renderer *renderer, int WindowWidth, int WindowHeight)
+    {
         std::vector<char> rendered_image = BMPImageSaver::serialize(im);
 
-        SDL_RWops* sdl_buff = SDL_RWFromMem(rendered_image.data(), rendered_image.size());
+        SDL_RWops *sdl_buff = SDL_RWFromMem(rendered_image.data(), rendered_image.size());
         if (sdl_buff == NULL)
         {
             std::cout << "sdl_buff: " << SDL_GetError();
             std::exit(-1);
         }
 
-        SDL_Surface* loaded_surface = IMG_LoadBMP_RW(sdl_buff);
+        SDL_Surface *loaded_surface = IMG_LoadBMP_RW(sdl_buff);
 
-        if (!loaded_surface) {
+        if (!loaded_surface)
+        {
             std::cout << "IMG_LoadBMP_RW: " << SDL_GetError();
             std::exit(-1);
         }
 
-        SDL_Texture* loaded_tex = SDL_CreateTextureFromSurface(renderer, loaded_surface);
+        SDL_Texture *loaded_tex = SDL_CreateTextureFromSurface(renderer, loaded_surface);
 
         if (loaded_tex == NULL)
         {
@@ -71,7 +73,7 @@ namespace {
 }
 
 // Main code
-int main(int, char**)
+int main(int, char **)
 {
     // Setup SDL
     if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_TIMER | SDL_INIT_GAMECONTROLLER) != 0)
@@ -85,27 +87,30 @@ int main(int, char**)
     SDL_SetHint(SDL_HINT_IME_SHOW_UI, "1");
 #endif
 
-    SDL_SetHint(SDL_HINT_RENDER_DRIVER, "direct3d12");
+    // SDL_SetHint(SDL_HINT_RENDER_DRIVER, "direct3d12");
 
     // Create window with SDL_Renderer graphics context
-    SDL_WindowFlags window_flags = (SDL_WindowFlags)(SDL_WINDOW_ALLOW_HIGHDPI);
-    const int WindowWidth = 1280;
-    const int WindowHeight = 720;
+    SDL_WindowFlags window_flags = (SDL_WindowFlags)(SDL_WINDOW_ALLOW_HIGHDPI | SDL_WINDOW_RESIZABLE);
+    int WindowWidth = 1280;
+    int WindowHeight = 720;
 
-    HittableScene world{ emissionTest() };
-    Camera cam(Vec3D(13, 2, 3), Vec3D(-13, -2, -3), Vec3D(0, -1, 0), 10, WindowWidth, WindowHeight);
+    const int ImWidth = 1280;
+    const int ImHeight = 720;
+
+    HittableScene world{final_render()};
+    Camera cam(Vec3D(13, 2, 3), Vec3D(-13, -2, -3), Vec3D(0, -1, 0), 10, ImWidth, ImHeight);
     int num_render_threads = std::max(static_cast<int>(std::thread::hardware_concurrency()) - 2, 1);
-    //num_render_threads = 0;
-    CMRenderer ray_renderer(num_render_threads, cam, world);
+    // num_render_threads = 0;
+    CMARenderer ray_renderer(num_render_threads, cam, world);
 
-    SDL_Window* window = SDL_CreateWindow("FTC Ballistics Program Mk. 9", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, WindowWidth, WindowHeight, window_flags);
+    SDL_Window *window = SDL_CreateWindow("FTC Ballistics Program Mk. 9", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, WindowWidth, WindowHeight, window_flags);
     if (window == nullptr)
     {
         printf("Error: SDL_CreateWindow(): %s\n", SDL_GetError());
         return -1;
     }
 
-    SDL_Renderer* renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_PRESENTVSYNC | SDL_RENDERER_ACCELERATED);
+    SDL_Renderer *renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_PRESENTVSYNC | SDL_RENDERER_ACCELERATED);
     if (renderer == nullptr)
     {
         SDL_Log("Error creating SDL_Renderer!");
@@ -118,7 +123,7 @@ int main(int, char**)
     // Setup Dear ImGui context
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();
-    ImGuiIO& io = ImGui::GetIO();
+    ImGuiIO &io = ImGui::GetIO();
     (void)io;
     io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard; // Enable Keyboard Controls
     io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;  // Enable Gamepad Controls
@@ -155,15 +160,26 @@ int main(int, char**)
                 done = true;
             }
 
-            if (event.type == SDL_KEYDOWN) {
+            if (event.type == SDL_KEYDOWN)
+            {
                 // Handle key presses here
-                switch (event.key.keysym.sym) {
+                switch (event.key.keysym.sym)
+                {
 
                 case SDLK_SPACE:
                     save_image_flag = true;
                     break;
                 default:
                     break;
+                }
+            }
+
+            if (event.type == SDL_WINDOWEVENT)
+            {
+                if (event.window.event == SDL_WINDOWEVENT_SIZE_CHANGED)
+                {
+                    WindowWidth = event.window.data1;
+                    WindowHeight = event.window.data2;
                 }
             }
         }
@@ -177,7 +193,7 @@ int main(int, char**)
         static float theta = 55;
 
         static float effiency = 1;
-        static std::array<float, 2UL> startingPoint = { 0, 0 };
+        static std::array<float, 2UL> startingPoint = {0, 0};
 
         // 2. Show a simple window that we create ourselves. We use a Begin/End pair to create a named window.
         {
@@ -207,8 +223,7 @@ int main(int, char**)
         {
             using namespace std::chrono;
             milliseconds ms = duration_cast<milliseconds>(
-                system_clock::now().time_since_epoch()
-            );
+                system_clock::now().time_since_epoch());
             std::string file_path = std::to_string(ms.count()) + ".bmp";
             BMPImageSaver::save(im, file_path.c_str());
         }

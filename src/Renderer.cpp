@@ -4,14 +4,14 @@
 #include "ThreadPool.hpp"
 
 // ------------- RendererCommon -------------
-Color3D RendererCommon::sky_color(const Ray& sky_ray)
+Color3D RendererCommon::sky_color(const Ray &sky_ray)
 {
 	Vec3D unit_direction = sky_ray.direction().normalized();
 	double a = 0.5 * (unit_direction.y() + 1.0);
 	return (1.0 - a) * Vec3D(1.0, 1.0, 1.0) + a * Vec3D(0.5, 0.7, 1.0);
 }
 
-RGB_Pixel RendererCommon::render_pixel(size_t x, size_t y, size_t samples, size_t depth, const Camera& cam, const HittableScene& scene)
+RGB_Pixel RendererCommon::render_pixel(size_t x, size_t y, size_t samples, size_t depth, const Camera &cam, const HittableScene &scene)
 {
 	Color3D color(0, 0, 0);
 	for (size_t i = 0; i < samples; i++)
@@ -22,7 +22,7 @@ RGB_Pixel RendererCommon::render_pixel(size_t x, size_t y, size_t samples, size_
 	return RGB_Pixel::normalize_average(color, samples);
 }
 
-Vec3D RendererCommon::get_ray_color(const Ray& ray, const HittableScene& scene, size_t depth)
+Vec3D RendererCommon::get_ray_color(const Ray &ray, const HittableScene &scene, size_t depth)
 {
 	if (depth <= 0)
 	{
@@ -34,7 +34,7 @@ Vec3D RendererCommon::get_ray_color(const Ray& ray, const HittableScene& scene, 
 	// Us from drawing stuff that is behind the camera
 	if (!scene.hit(ray, Interval(0.001, Interval::INF), rec))
 	{
-		//return { 0,0,0 };
+		// return { 0,0,0 };
 		return sky_color(ray);
 	}
 
@@ -68,64 +68,34 @@ Image Renderer::render()
 	return im;
 }
 
-// ------------- MTRenderer -------------
+// ------------ CMARenderer -------------------
 
-void MTRenderer::render_row(Image& im_out, size_t row_idx) const
+CMARenderer::CMARenderer(size_t num_thds, const Camera &cam, const HittableScene &scene) : cam(cam),
+																						   scene(scene),
+																						   num_thds(num_thds),
+																						   float_image(cam.width(), cam.height()),
+																						   row_process_flags(cam.height())
 {
-	for (size_t i = 0; i < im_out.width(); i++)
+	// Thread access constraints only hold as long as our indexes can't overlap
+	assert(num_thds < cam.height() / 2);
+
+	for (size_t i = 0; i < num_thds; i++)
 	{
-		im_out.at(i, row_idx) = RendererCommon::render_pixel(i, row_idx, m_samples_per_pixel, m_max_depth, cam, scene);
+		this->threads.emplace_back([this]
+								   { this->thread_main(); });
 	}
 }
 
-Image MTRenderer::render() {
-	Image im(cam.width(), cam.height());
-
-	ThreadPool ray_trace_pool(m_num_thds);
-	for (size_t j = 0; j < im.height(); ++j) {
-
-		ray_trace_pool.submit_task([this, j, &im]() {
-			this->render_row(im, j);
-			}
-		);
+CMARenderer::~CMARenderer()
+{
+	this->running.store(false, std::memory_order::relaxed);
+	for (auto &thd : this->threads)
+	{
+		thd.join();
 	}
-	return im;
 }
 
-// ------------- CMRenderer -------------
-
-CMRenderer::CMRenderer(size_t num_thds, const Camera& cam, const HittableScene& scene) :
-	cam(cam),
-	scene(scene),
-	num_thds(num_thds),
-	float_image(cam.width(), cam.height()),
-	workerPool(num_thds)
-{
-	this->add_row_tasks();
-	return;
-}
-
-CMRenderer::~CMRenderer()
-{
-	workerPool.clear_tasks();
-}
-
-void CMRenderer::add_row_tasks()
-{
-	for (size_t j = 0; j < cam.height(); ++j) {
-
-		workerPool.submit_task([this, j]() {
-			this->update_row(j);
-			}
-		);
-	}
-	workerPool.submit_task([this]() {
-		this->add_row_tasks();
-		}
-	);
-}
-
-void CMRenderer::update_row(size_t row)
+void CMARenderer::update_row(size_t row)
 {
 	for (size_t i = 0; i < cam.width(); i++)
 	{
@@ -135,9 +105,31 @@ void CMRenderer::update_row(size_t row)
 	}
 }
 
-Image CMRenderer::get_image() noexcept
+void CMARenderer::thread_main()
+{
+
+	while (this->running.load(std::memory_order::relaxed))
+	{
+		for (size_t i = 0; i < this->cam.height(); i++)
+		{
+			bool expected = false;
+			if (this->row_process_flags[i].compare_exchange_strong(expected, true, std::memory_order::acquire, std::memory_order::relaxed))
+			{
+				update_row(i);
+				this->row_process_flags[i].store(false, std::memory_order::release);
+			}
+			if (!this->running.load(std::memory_order::relaxed))
+			{
+				return;
+			}
+		}
+	}
+}
+
+Image CMARenderer::get_image() noexcept
 {
 	Image im(cam.width(), cam.height());
+	// TODO: Get locks
 
 	auto pixels = im.data();
 	auto hsv_colors = this->float_image.data();
