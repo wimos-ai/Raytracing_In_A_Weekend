@@ -13,7 +13,7 @@ namespace RendererCommon
 		return (1.0 - a) * Vec3D(1.0, 1.0, 1.0) + a * Vec3D(0.5, 0.7, 1.0);
 	}
 
-	Vec3D get_ray_color(const Ray &ray, const HittableScene &scene, size_t depth, std::mt19937_64& rd)
+	Vec3D get_ray_color(const Ray &ray, const HittableScene &scene, size_t depth, std::mt19937_64 &rd)
 	{
 		if (depth <= 0)
 		{
@@ -41,7 +41,7 @@ namespace RendererCommon
 		return scatter_color + emission;
 	}
 
-	RGB_Pixel render_pixel(size_t x, size_t y, size_t samples, size_t depth, const Camera &cam, const HittableScene &scene, std::mt19937_64& rd)
+	RGB_Pixel render_pixel(size_t x, size_t y, size_t samples, size_t depth, const Camera &cam, const HittableScene &scene, std::mt19937_64 &rd)
 	{
 		Color3D color(0, 0, 0);
 		for (size_t i = 0; i < samples; i++)
@@ -99,7 +99,7 @@ CMARenderer::~CMARenderer()
 	}
 }
 
-void CMARenderer::update_row(size_t row, std::mt19937_64& rd)
+void CMARenderer::update_row(size_t row, std::mt19937_64 &rd)
 {
 	for (size_t i = 0; i < cam.width(); i++)
 	{

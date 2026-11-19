@@ -7,7 +7,7 @@ bool Material::scatter(const Ray &r_in, const HitRecord &rec, Color3D &attenuati
 }
 Vec3D Material::emission() const
 {
-	return Vec3D{0,0,0};
+	return Vec3D{0, 0, 0};
 }
 
 bool Lambertian::scatter(const Ray &, const HitRecord &rec, Color3D &attenuation, Ray &scattered, std::mt19937_64 &rd) const
@@ -68,8 +68,6 @@ double Dielectric::Schlicks_approx_refl(double cos_val, double refl_idx)
 	const double cv5 = (cv * cv) * (cv * cv) * cv;
 	return r0 + (1 - r0) * cv5;
 }
-
-
 
 Vec3D Emissive::emission() const
 {

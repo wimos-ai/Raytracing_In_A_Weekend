@@ -9,7 +9,6 @@
 #include <atomic>
 #include <condition_variable>
 
-
 // Basic Single Threaded Renderer
 class Renderer
 {
@@ -41,7 +40,7 @@ public:
 	Image get_image() noexcept;
 
 private:
-	void update_row(size_t row, std::mt19937_64& rd);
+	void update_row(size_t row, std::mt19937_64 &rd);
 	void thread_main();
 
 private:

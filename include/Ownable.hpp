@@ -1,5 +1,6 @@
 #pragma once
-class Ownable{
+class Ownable
+{
 public:
-    virtual ~Ownable()  = default;
+    virtual ~Ownable() = default;
 };

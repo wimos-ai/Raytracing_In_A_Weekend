@@ -7,39 +7,35 @@
 #include "Shapes.hpp"
 #include "HittableScene.hpp"
 
-
-//See https://raytracing.github.io/books/RayTracingInOneWeekend.html#rays,asimplecamera,andbackground/sendingraysintothescene
+// See https://raytracing.github.io/books/RayTracingInOneWeekend.html#rays,asimplecamera,andbackground/sendingraysintothescene
 class Camera
 {
 public:
-
-
-	Camera(const Vec3D& pos, const Vec3D& cam_dir, const Vec3D& image_up, double focal_len, size_t pix_width, size_t pix_height);
+	Camera(const Vec3D &pos, const Vec3D &cam_dir, const Vec3D &image_up, double focal_len, size_t pix_width, size_t pix_height);
 	Camera() = delete;
 
 	static std::pair<size_t, size_t> width_height_from_aspect_ratio(size_t width, double aspect_ratio);
 
-	size_t width() const {
+	size_t width() const
+	{
 		return m_width;
 	}
-	size_t height() const {
+	size_t height() const
+	{
 		return m_height;
 	}
 
-	Ray ray_at_pixel(size_t width, size_t height, std::mt19937_64& rd) const;
-private:
-	Vec3D pixel_sample_square(std::mt19937_64& rd) const;
+	Ray ray_at_pixel(size_t width, size_t height, std::mt19937_64 &rd) const;
 
 private:
-	
-	Vec3D m_focal_point;		//Focal Point
-	Vec3D m_direction;			//Image normal vector, may be discardable after construction
-	Vec3D m_viewport_corner;	//Pixel 0,0 location
-	Vec3D m_delta_width;		//Horizontal Pixel Delta
-	Vec3D m_delta_height;		//Vertical Pixel Delta
-	size_t m_width;				//Number of horizontal Pixels
-	size_t m_height;			//Number of vertical pixels
+	Vec3D pixel_sample_square(std::mt19937_64 &rd) const;
+
+private:
+	Vec3D m_focal_point;	 // Focal Point
+	Vec3D m_direction;		 // Image normal vector, may be discardable after construction
+	Vec3D m_viewport_corner; // Pixel 0,0 location
+	Vec3D m_delta_width;	 // Horizontal Pixel Delta
+	Vec3D m_delta_height;	 // Vertical Pixel Delta
+	size_t m_width;			 // Number of horizontal Pixels
+	size_t m_height;		 // Number of vertical pixels
 };
-
-
-

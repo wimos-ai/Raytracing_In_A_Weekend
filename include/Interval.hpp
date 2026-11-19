@@ -1,8 +1,6 @@
 #pragma once
 #include <limits>
 
-
-
 class Interval
 {
 public:
@@ -12,19 +10,22 @@ public:
 
 	inline Interval(double min, double max) : m_min(min), m_max(max) {};
 
-	inline bool contains(double x) const {
+	inline bool contains(double x) const
+	{
 		return m_min <= x && x <= m_max;
 	}
 
-	inline bool surrounds(double x) const {
+	inline bool surrounds(double x) const
+	{
 		return m_min < x && x < m_max;
 	}
 
 	inline double max() const { return m_max; }
 
-	inline double min() const{ return m_min; }
+	inline double min() const { return m_min; }
 
-	inline double clamp(double d) const {
+	inline double clamp(double d) const
+	{
 		if (d < m_min)
 		{
 			return m_min;
@@ -43,4 +44,3 @@ private:
 public:
 	static const Interval EMPTY, REALS;
 };
-

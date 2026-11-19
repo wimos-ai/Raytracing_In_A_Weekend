@@ -22,7 +22,7 @@ namespace
         istream >> std::ws;
         istream.read(buff, len);
 
-        if ( istream.fail())
+        if (istream.fail())
         {
             throw std::runtime_error("Failed to read buffer");
         }
