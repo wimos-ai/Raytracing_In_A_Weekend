@@ -6,6 +6,8 @@
 HittableScene final_render()
 {
 	using std::make_unique;
+	std::mt19937_64 rd;
+	std::uniform_real_distribution<double> fuzz_dist(0, 0.5);
 
 	HittableScene world;
 
@@ -21,15 +23,15 @@ HittableScene final_render()
 	{
 		for (int_fast8_t b = -11; b < 11; b++)
 		{
-			auto choose_mat = RandUtils::rand();
-			Vec3D center(a + 0.9 * RandUtils::rand(), 0.2, b + 0.9 * RandUtils::rand());
+			auto choose_mat = std::generate_canonical<double, -1u>(rd);
+			Vec3D center(a + 0.9 * std::generate_canonical<double, -1u>(rd), 0.2, b + 0.9 * std::generate_canonical<double, -1u>(rd));
 
 			if ((center - Vec3D(4, 0.2, 0)).norm() > 0.9)
 			{
 				if (choose_mat < 0.8)
 				{
 					// diffuse
-					Vec3D albedo = (randomVec3D().cwiseProduct(randomVec3D()));
+					Vec3D albedo = (randomVec3D(rd).cwiseProduct(randomVec3D(rd)));
 					auto sphere_material = make_unique<Lambertian>(albedo);
 					auto s = make_unique<Sphere>(center, 0.2, sphere_material.get());
 					world.add_shape(std::move(s));
@@ -38,8 +40,8 @@ HittableScene final_render()
 				else if (choose_mat < 0.95)
 				{
 					// metal
-					Vec3D albedo = randomVec3D(Interval(0.5, 1));
-					double fuzz = RandUtils::rand(Interval(0, 0.5));
+					Vec3D albedo = randomVec3D(rd, Interval(0.5, 1));
+					double fuzz = fuzz_dist(rd);
 					auto sphere_material = make_unique<FuzzyMetal>(albedo, fuzz);
 					auto s = make_unique<Sphere>(center, 0.2, sphere_material.get());
 					world.add_shape(std::move(s));
@@ -138,7 +140,7 @@ HittableScene forbidden_nacho()
 	sceen.add_shape(std::move(t1));
 	sceen.take_ownership(std::move(nacho_color));
 
-    return sceen;
+	return sceen;
 }
 
 HittableScene binary_stl_test()
@@ -160,6 +162,8 @@ HittableScene emissionTest()
 	using std::make_unique;
 
 	HittableScene world;
+	std::mt19937_64 rd;
+	std::uniform_real_distribution<double> fuzz_dist(0, 0.5);
 
 	{
 		auto ground_material = make_unique<Lambertian>(Color3D(0.5, 0.5, 0.5));
@@ -173,15 +177,15 @@ HittableScene emissionTest()
 	{
 		for (int_fast8_t b = -11; b < 11; b++)
 		{
-			auto choose_mat = RandUtils::rand();
-			Vec3D center(a + 0.9 * RandUtils::rand(), 0.2, b + 0.9 * RandUtils::rand());
+			auto choose_mat = std::generate_canonical<double, -1u>(rd);
+			Vec3D center(a + 0.9 * std::generate_canonical<double, -1u>(rd), 0.2, b + 0.9 * std::generate_canonical<double, -1u>(rd));
 
 			if ((center - Vec3D(4, 0.2, 0)).norm() > 0.9)
 			{
 				if (choose_mat < 0.8)
 				{
 					// diffuse
-					Vec3D albedo = (randomVec3D().cwiseProduct(randomVec3D()));
+					Vec3D albedo = (randomVec3D(rd).cwiseProduct(randomVec3D(rd)));
 					auto sphere_material = make_unique<Lambertian>(albedo);
 					auto s = make_unique<Sphere>(center, 0.2, sphere_material.get());
 					world.add_shape(std::move(s));
@@ -190,8 +194,8 @@ HittableScene emissionTest()
 				else if (choose_mat < 0.95)
 				{
 					// metal
-					Vec3D albedo = randomVec3D(Interval(0.5, 1));
-					double fuzz = RandUtils::rand(Interval(0, 0.5));
+					Vec3D albedo = randomVec3D(rd, Interval(0.5, 1));
+					double fuzz = fuzz_dist(rd);
 					auto sphere_material = make_unique<FuzzyMetal>(albedo, fuzz);
 					auto s = make_unique<Sphere>(center, 0.2, sphere_material.get());
 					world.add_shape(std::move(s));
@@ -209,11 +213,10 @@ HittableScene emissionTest()
 		}
 	}
 
-	auto material1 = make_unique<Emissive>(Color3D{ 1,1,1 },20);
+	auto material1 = make_unique<Emissive>(Color3D{1, 1, 1}, 20);
 	auto s1 = make_unique<Sphere>(Vec3D(0, 1, 0), 1.0, material1.get());
 	world.add_shape(std::move(s1));
 	world.take_ownership(std::move(material1));
-
 
 	return world;
 }

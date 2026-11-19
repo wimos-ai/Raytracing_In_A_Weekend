@@ -2,6 +2,7 @@
 #include <utility>
 #include <iostream>
 #include <sstream>
+#include <random>
 
 #include <SDL.h>
 #include <SDL_image.h>
@@ -20,7 +21,6 @@
 #include "Vec3D.hpp"
 #include "Shapes.hpp"
 #include "Material.hpp"
-#include "Utills.hpp"
 
 #if !SDL_VERSION_ATLEAST(2, 0, 17)
 #error This backend requires SDL 2.0.17+ because of SDL_RenderGeometry() function

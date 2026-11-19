@@ -41,7 +41,7 @@ public:
 	Image get_image() noexcept;
 
 private:
-	void update_row(size_t row);
+	void update_row(size_t row, std::mt19937_64& rd);
 	void thread_main();
 
 private:

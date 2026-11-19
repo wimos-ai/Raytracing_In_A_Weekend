@@ -26,9 +26,9 @@ public:
 		return m_height;
 	}
 
-	Ray ray_at_pixel(size_t width, size_t height) const;
+	Ray ray_at_pixel(size_t width, size_t height, std::mt19937_64& rd) const;
 private:
-	Vec3D pixel_sample_square() const;
+	Vec3D pixel_sample_square(std::mt19937_64& rd) const;
 
 private:
 	

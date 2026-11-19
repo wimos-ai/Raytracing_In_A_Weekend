@@ -55,7 +55,6 @@ add_executable(
     ${IMGUI_SRC_FILES}
     ${SDL2_IMAGE_SRC_FILES}
     "./src/Interval.cpp"
-    "./src/Utills.cpp"
     "./src/HittableScene.cpp"
     "./src/RGB_Pixel.cpp"
     "./src/Shapes.cpp"

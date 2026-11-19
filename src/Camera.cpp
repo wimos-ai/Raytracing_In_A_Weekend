@@ -1,7 +1,7 @@
 #include "Camera.hpp"
 #include <cassert>
 #include <limits>
-#include "Utills.hpp"
+#include <random>
 #include <cstdio>
 
 //Vec3D m_focal_point;		//Focal Point
@@ -29,23 +29,22 @@ Camera::Camera(const Vec3D& pos, const Vec3D& cam_dir, const Vec3D& image_up, do
 
 
 
-Ray Camera::ray_at_pixel(size_t width, size_t height) const
+Ray Camera::ray_at_pixel(size_t width, size_t height, std::mt19937_64& rd) const
 {
 	Vec3D width_vec = m_delta_width * static_cast<double>(width);
 	Vec3D height_vec = m_delta_height * static_cast<double>(height);
 	Vec3D pix_location = m_viewport_corner + width_vec + height_vec;
 	Vec3D fp_to_pixel = pix_location - m_focal_point;
-	Vec3D random_deviation = pixel_sample_square();
+	Vec3D random_deviation = pixel_sample_square(rd);
 	return { m_focal_point, fp_to_pixel + random_deviation };
 }
 
 
-Vec3D Camera::pixel_sample_square() const
+Vec3D Camera::pixel_sample_square(std::mt19937_64& rd) const
 {
 	// Returns a random point in the square surrounding a pixel at the origin.
-	auto jitter_x = -0.5 + RandUtils::rand();
-	auto jitter_y = -0.5 + RandUtils::rand();
-	return (jitter_x * m_delta_width) + (jitter_y * m_delta_height);
+	std::uniform_real_distribution<double> dis(-0.5, 0.5);
+	return (dis(rd) * m_delta_width) + (dis(rd) * m_delta_height);
 }
 
 std::pair<size_t, size_t> Camera::width_height_from_aspect_ratio(size_t width, double aspect_ratio) {

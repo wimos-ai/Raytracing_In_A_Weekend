@@ -1,7 +1,7 @@
 #include "Material.hpp"
 #include "Shapes.hpp"
 
-bool Material::scatter(const Ray &r_in, const HitRecord &rec, Color3D &attenuation, Ray &scattered) const
+bool Material::scatter(const Ray &r_in, const HitRecord &rec, Color3D &attenuation, Ray &scattered, std::mt19937_64 &rd) const
 {
 	return false;
 }
@@ -10,9 +10,9 @@ Vec3D Material::emission() const
 	return Vec3D{0,0,0};
 }
 
-bool Lambertian::scatter(const Ray &, const HitRecord &rec, Color3D &attenuation, Ray &scattered) const
+bool Lambertian::scatter(const Ray &, const HitRecord &rec, Color3D &attenuation, Ray &scattered, std::mt19937_64 &rd) const
 {
-	Vec3D scatter_direction = rec.normal + random_unit_vec();
+	Vec3D scatter_direction = rec.normal + random_unit_vec(rd);
 	// Catch degenerate scatter direction
 	if (vec_near_zero(scatter_direction))
 		scatter_direction = rec.normal;
@@ -21,7 +21,7 @@ bool Lambertian::scatter(const Ray &, const HitRecord &rec, Color3D &attenuation
 	return true;
 }
 
-bool Metal::scatter(const Ray &r_in, const HitRecord &rec, Color3D &attenuation, Ray &scattered) const
+bool Metal::scatter(const Ray &r_in, const HitRecord &rec, Color3D &attenuation, Ray &scattered, std::mt19937_64 &rd) const
 {
 	Vec3D reflected = vec_reflect(r_in.direction().normalized(), rec.normal);
 	scattered = Ray(rec.point, reflected);
@@ -29,16 +29,16 @@ bool Metal::scatter(const Ray &r_in, const HitRecord &rec, Color3D &attenuation,
 	return true;
 }
 
-bool FuzzyMetal::scatter(const Ray &r_in, const HitRecord &rec, Color3D &attenuation, Ray &scattered) const
+bool FuzzyMetal::scatter(const Ray &r_in, const HitRecord &rec, Color3D &attenuation, Ray &scattered, std::mt19937_64 &rd) const
 {
 	Vec3D reflected = vec_reflect(r_in.direction().normalized(), rec.normal);
-	reflected = reflected.normalized() + (m_fuzz * random_unit_vec());
-	scattered = Ray(rec.point, reflected + (m_fuzz * randomVec3D()));
+	reflected = reflected.normalized() + (m_fuzz * random_unit_vec(rd));
+	scattered = Ray(rec.point, reflected + (m_fuzz * randomVec3D(rd)));
 	attenuation = m_albedo;
 	return true;
 }
 
-bool Dielectric::scatter(const Ray &r_in, const HitRecord &rec, Color3D &attenuation, Ray &scattered) const
+bool Dielectric::scatter(const Ray &r_in, const HitRecord &rec, Color3D &attenuation, Ray &scattered, std::mt19937_64 &rd) const
 {
 	attenuation = Color3D(1, 1, 1);
 	double refraction_ratio = rec.front_face ? (1.0 / m_index_of_refraction) : m_index_of_refraction;
@@ -49,7 +49,7 @@ bool Dielectric::scatter(const Ray &r_in, const HitRecord &rec, Color3D &attenua
 
 	bool cannot_refract = refraction_ratio * sin_theta > 1.0;
 	Vec3D direction;
-	if (cannot_refract || Dielectric::Schlicks_approx_refl(cos_theta, refraction_ratio) > RandUtils::rand())
+	if (cannot_refract || Dielectric::Schlicks_approx_refl(cos_theta, refraction_ratio) > std::generate_canonical<double, -1u>(rd))
 		direction = vec_reflect(unit_direction, rec.normal);
 	else
 		direction = vec_refract(unit_direction, rec.normal, refraction_ratio);

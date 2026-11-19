@@ -13,7 +13,7 @@ namespace RendererCommon
 		return (1.0 - a) * Vec3D(1.0, 1.0, 1.0) + a * Vec3D(0.5, 0.7, 1.0);
 	}
 
-	Vec3D get_ray_color(const Ray &ray, const HittableScene &scene, size_t depth)
+	Vec3D get_ray_color(const Ray &ray, const HittableScene &scene, size_t depth, std::mt19937_64& rd)
 	{
 		if (depth <= 0)
 		{
@@ -33,21 +33,21 @@ namespace RendererCommon
 		Color3D attenuation;
 		Color3D emission = rec.material->emission();
 
-		if (!rec.material->scatter(ray, rec, attenuation, scattered))
+		if (!rec.material->scatter(ray, rec, attenuation, scattered, rd))
 			return emission;
 
-		Color3D scatter_color = attenuation.cwiseProduct(get_ray_color(scattered, scene, depth - 1));
+		Color3D scatter_color = attenuation.cwiseProduct(get_ray_color(scattered, scene, depth - 1, rd));
 
 		return scatter_color + emission;
 	}
 
-	RGB_Pixel render_pixel(size_t x, size_t y, size_t samples, size_t depth, const Camera &cam, const HittableScene &scene)
+	RGB_Pixel render_pixel(size_t x, size_t y, size_t samples, size_t depth, const Camera &cam, const HittableScene &scene, std::mt19937_64& rd)
 	{
 		Color3D color(0, 0, 0);
 		for (size_t i = 0; i < samples; i++)
 		{
-			Ray curr_ray = cam.ray_at_pixel(x, y);
-			color = color + get_ray_color(curr_ray, scene, depth);
+			Ray curr_ray = cam.ray_at_pixel(x, y, rd);
+			color = color + get_ray_color(curr_ray, scene, depth, rd);
 		}
 		return RGB_Pixel::normalize_average(color, samples);
 	}
@@ -58,14 +58,14 @@ namespace RendererCommon
 
 Image Renderer::get_image()
 {
-
+	std::mt19937_64 rd;
 	Image im(cam.width(), cam.height());
 
 	for (size_t j = 0; j < im.height(); ++j)
 	{
 		for (size_t i = 0; i < im.width(); i++)
 		{
-			im.at(i, j) = RendererCommon::render_pixel(i, j, m_samples_per_pixel, m_max_depth, cam, scene);
+			im.at(i, j) = RendererCommon::render_pixel(i, j, m_samples_per_pixel, m_max_depth, cam, scene, rd);
 		}
 	}
 
@@ -99,19 +99,19 @@ CMARenderer::~CMARenderer()
 	}
 }
 
-void CMARenderer::update_row(size_t row)
+void CMARenderer::update_row(size_t row, std::mt19937_64& rd)
 {
 	for (size_t i = 0; i < cam.width(); i++)
 	{
-		Ray curr_ray = cam.ray_at_pixel(i, row);
-		float_image[i][row].first += RendererCommon::get_ray_color(curr_ray, this->scene, this->DEFAULT_DEPTH);
+		Ray curr_ray = cam.ray_at_pixel(i, row, rd);
+		float_image[i][row].first += RendererCommon::get_ray_color(curr_ray, this->scene, this->DEFAULT_DEPTH, rd);
 		float_image[i][row].second += 1;
 	}
 }
 
 void CMARenderer::thread_main()
 {
-
+	std::mt19937_64 rd;
 	while (this->running.load(std::memory_order::relaxed))
 	{
 		for (size_t i = 0; i < this->cam.height(); i++)
@@ -119,7 +119,7 @@ void CMARenderer::thread_main()
 			bool expected = false;
 			if (this->row_process_flags[i].compare_exchange_strong(expected, true, std::memory_order::acquire, std::memory_order::relaxed))
 			{
-				update_row(i);
+				update_row(i, rd);
 				this->row_process_flags[i].store(false, std::memory_order::release);
 			}
 			if (!this->running.load(std::memory_order::relaxed))
